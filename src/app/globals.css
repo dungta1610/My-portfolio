@@ -1,26 +1,171 @@
 @import "tailwindcss";
 
+@theme {
+  --font-press: var(--font-press-start), "Press Start 2P", system-ui;
+  --font-vt: var(--font-vt323), "VT323", monospace;
+  --font-sans: var(--font-outfit), "Outfit", sans-serif;
+  
+  --color-rpg-bg: #0b0c10;
+  --color-rpg-card: #151821;
+  --color-rpg-card-hover: #1e2230;
+  
+  --color-rpg-gold: #d4af37;
+  --color-rpg-gold-light: #f3e5ab;
+  --color-rpg-gold-dark: #aa7c11;
+  
+  --color-rpg-mana: #00a8ff;
+  --color-rpg-health: #ff4757;
+  --color-rpg-emerald: #2ed573;
+  --color-rpg-purple: #8e44ad;
+  --color-rpg-border: #2e3440;
+  
+  --animate-pixel-blink: pixel-blink 1s steps(2, start) infinite;
+  --animate-pixel-float: pixel-float 3s ease-in-out infinite;
+  --animate-sparkle: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes pixel-blink {
+  to { visibility: hidden; }
+}
+
+@keyframes pixel-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); filter: brightness(1.2); }
+}
+
+/* Custom styles and utilities */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --rpg-bg: #0b0c10;
+  --rpg-card: #151821;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--rpg-bg);
+  color: #ededed;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar for RPG feel */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0c10;
+  border-left: 4px solid #1e2230;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4af37;
+  border: 3px solid #0b0c10;
+  box-shadow: 0 0 0 2px #d4af37;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f3e5ab;
+}
+
+/* 8-bit Pixel Borders (Dual shade for depth) */
+.pixel-border-gold {
+  border: 4px solid #d4af37;
+  position: relative;
+  box-shadow:
+    0 -4px 0 -2px #0b0c10,
+    0 4px 0 -2px #0b0c10,
+    -4px 0 0 -2px #0b0c10,
+    4px 0 0 -2px #0b0c10,
+    inset 0 0 0 2px #5a450c;
+}
+
+.pixel-border-slate {
+  border: 4px solid #4c566a;
+  position: relative;
+  box-shadow:
+    0 -4px 0 -2px #0b0c10,
+    0 4px 0 -2px #0b0c10,
+    -4px 0 0 -2px #0b0c10,
+    4px 0 0 -2px #0b0c10,
+    inset 0 0 0 2px #2e3440;
+}
+
+.pixel-border-red {
+  border: 4px solid #ff4757;
+  position: relative;
+  box-shadow:
+    0 -4px 0 -2px #0b0c10,
+    0 4px 0 -2px #0b0c10,
+    -4px 0 0 -2px #0b0c10,
+    4px 0 0 -2px #0b0c10,
+    inset 0 0 0 2px #8b0000;
+}
+
+.pixel-border-blue {
+  border: 4px solid #00a8ff;
+  position: relative;
+  box-shadow:
+    0 -4px 0 -2px #0b0c10,
+    0 4px 0 -2px #0b0c10,
+    -4px 0 0 -2px #0b0c10,
+    4px 0 0 -2px #0b0c10,
+    inset 0 0 0 2px #0056b3;
+}
+
+.pixel-border-emerald {
+  border: 4px solid #2ed573;
+  position: relative;
+  box-shadow:
+    0 -4px 0 -2px #0b0c10,
+    0 4px 0 -2px #0b0c10,
+    -4px 0 0 -2px #0b0c10,
+    4px 0 0 -2px #0b0c10,
+    inset 0 0 0 2px #006400;
+}
+
+.pixel-border-purple {
+  border: 4px solid #8e44ad;
+  position: relative;
+  box-shadow:
+    0 -4px 0 -2px #0b0c10,
+    0 4px 0 -2px #0b0c10,
+    -4px 0 0 -2px #0b0c10,
+    4px 0 0 -2px #0b0c10,
+    inset 0 0 0 2px #4a154b;
+}
+
+/* Dungeon background patterns */
+.pixel-bg-dungeon {
+  background-image: 
+    linear-gradient(45deg, #10121a 25%, transparent 25%), 
+    linear-gradient(-45deg, #10121a 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #10121a 75%), 
+    linear-gradient(-45deg, transparent 75%, #10121a 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  background-color: #0b0c10;
+}
+
+/* Pixel text stroke shadow styling */
+.pixel-text-shadow {
+  text-shadow: 2px 2px 0px #000;
+}
+
+.pixel-text-shadow-gold {
+  text-shadow: 2px 2px 0px #5a450c;
+}
+
+/* Custom interactive pixel button hover */
+.pixel-btn-hover:hover {
+  transform: translate(2px, 2px);
+  box-shadow:
+    0 -2px 0 -1px #0b0c10,
+    0 2px 0 -1px #0b0c10,
+    -2px 0 0 -1px #0b0c10,
+    2px 0 0 -1px #0b0c10;
+}
+
+/* Utility to disable scrollbars when modal is open */
+.no-scroll {
+  overflow: hidden;
 }

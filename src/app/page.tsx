@@ -1,65 +1,222 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { RPGHeader } from "../components/layout/RPGHeader";
+import { RecruiterHeader } from "../components/layout/RecruiterHeader";
+import { HeroSection } from "../components/sections/HeroSection";
+import { AboutSection } from "../components/sections/AboutSection";
+import { ResumeSection } from "../components/sections/ResumeSection";
+import { ProjectsSection } from "../components/sections/ProjectsSection";
+import { SkillSection } from "../components/sections/SkillSection";
+import { Achievements } from "../components/sections/Achievements";
+import { Resources } from "../components/sections/Resources";
+import { BlogSection } from "../components/sections/BlogSection";
+import { GitHubInsights } from "../components/sections/GitHubInsights";
+import { ContactSection } from "../components/sections/ContactSection";
+import { GitHubProfileStats, Project } from "../types/portfolio";
+import { PixelCard } from "../components/ui/PixelCard";
+import { PixelButton } from "../components/ui/PixelButton";
+import { RefreshCw, Swords, ShieldCheck, Heart } from "lucide-react";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+  const [recruiterMode, setRecruiterMode] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
+  const [profile, setProfile] = useState<GitHubProfileStats | null>(null);
+  const [repos, setRepos] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPortfolioData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/github");
+      if (!res.ok) {
+        throw new Error("Failed to load portfolio stats from server.");
+      }
+      const data = await res.json();
+      setProfile(data.profile);
+      setRepos(data.repos);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPortfolioData();
+  }, []);
+
+  // Intersection Observer to highlight active navigation tab during scroll
+  useEffect(() => {
+    const sections = ["hero", "resume", "projects", "skills", "achievements", "resources", "blog", "contact"];
+    const observers = sections.map((id) => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveSection(id);
+          }
+        },
+        { threshold: 0.25, rootMargin: "-80px 0px -20%" }
+      );
+      observer.observe(el);
+      return { observer, el };
+    });
+
+    return () => {
+      observers.forEach((obs) => {
+        if (obs) {
+          obs.observer.unobserve(obs.el);
+        }
+      });
+    };
+  }, [loading, recruiterMode]);
+
+  // Loading States
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center p-6 text-center select-none">
+        <div className="space-y-6 max-w-md w-full">
+          <div className="font-press text-[12px] text-[#d4af37] animate-pulse">
+            ⚔️ SUMMONING ADVENTURER DATA...
+          </div>
+          <div className="w-full bg-[#151821] border-4 border-[#4c566a] h-6 p-0.5 relative pixel-border-slate">
+            <div className="h-full bg-[#d4af37] animate-[sparkle_1.5s_infinite]" style={{ width: "65%" }} />
+          </div>
+          <p className="font-vt text-xl text-zinc-500">
+            Fetching stats from the GitHub ledger & loading maps
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </div>
+    );
+  }
+
+  // Error States
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center p-6 text-center">
+        <PixelCard variant="red" className="max-w-md w-full space-y-4">
+          <h2 className="font-press text-[10px] text-[#ff4757] uppercase tracking-wider">
+            ❌ SYSTEM BREACH (LOADING ERROR)
+          </h2>
+          <p className="font-vt text-lg text-zinc-300">
+            The server was unable to retrieve data.
+            <span className="block text-sm text-[#4c566a] mt-1">({error})</span>
+          </p>
+          <div className="pt-2">
+            <PixelButton variant="red" onClick={fetchPortfolioData} className="flex items-center gap-1.5 mx-auto">
+              <RefreshCw className="w-3.5 h-3.5" /> Retarget Endpoint
+            </PixelButton>
+          </div>
+        </PixelCard>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`min-h-screen flex flex-col ${recruiterMode ? "bg-zinc-950 font-sans" : "bg-[#0b0c10] pixel-bg-dungeon"}`}>
+      
+      {/* Header Selector */}
+      {recruiterMode ? (
+        <RecruiterHeader 
+          recruiterMode={recruiterMode} 
+          setRecruiterMode={setRecruiterMode} 
+          activeSection={activeSection}
+        />
+      ) : (
+        <RPGHeader 
+          recruiterMode={recruiterMode} 
+          setRecruiterMode={setRecruiterMode} 
+          activeSection={activeSection}
+        />
+      )}
+
+      {/* Main Sections */}
+      <main className="flex-grow pb-24">
+        
+        {/* Floating recruiter banner in RPG Mode */}
+        {!recruiterMode && (
+          <div className="max-w-5xl mx-auto px-4 mt-6">
+            <div className="bg-[#151821] border-2 border-[#ff4757] p-3 text-center flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]">
+              <span className="font-press text-[8px] text-[#ff4757] uppercase">
+                🛡️ HR COORDINATOR / TECH RECRUITER?
+              </span>
+              <span className="font-vt text-base text-zinc-300">
+                Switch to Recruiter Mode for a clean, direct, print-friendly layout.
+              </span>
+              <PixelButton variant="red" onClick={() => setRecruiterMode(true)}>
+                Engage Shield
+              </PixelButton>
+            </div>
+          </div>
+        )}
+
+        {/* Sections */}
+        <HeroSection stats={profile} recruiterMode={recruiterMode} />
+        <AboutSection recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <ResumeSection recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <ProjectsSection projects={repos} recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <SkillSection recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <Achievements recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <Resources recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <BlogSection recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <GitHubInsights stats={profile} projects={repos} recruiterMode={recruiterMode} />
+        
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        
+        <ContactSection recruiterMode={recruiterMode} />
+
       </main>
+
+      {/* Footer */}
+      <footer className={`py-8 text-center text-xs tracking-wider border-t
+        ${recruiterMode 
+          ? "bg-zinc-900 border-zinc-800 text-zinc-500 font-sans" 
+          : "bg-[#151821] border-[#d4af37] border-t-4 text-[#4c566a] font-press text-[7px]"
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div>
+            &copy; {new Date().getFullYear()} Ta Duc Dung. All Rights Reserved.
+          </div>
+          <div className="flex items-center gap-1.5 uppercase">
+            Built with 
+            {recruiterMode ? (
+              <Heart className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            ) : (
+              <span className="text-[#ff4757]">&#9829;</span>
+            )}
+            using Next.js + Tailwind CSS
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }
