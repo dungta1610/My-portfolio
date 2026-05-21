@@ -65,7 +65,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
       // Headers
       if (trimmed.startsWith("### ")) {
         return (
-          <h4 key={idx} className="font-press text-[10px] text-[#d4af37] mt-6 mb-3 uppercase tracking-wide">
+          <h4 key={idx} className="font-press text-[10px] text-[#ffd700] mt-6 mb-3 uppercase tracking-wide">
             {trimmed.replace("### ", "")}
           </h4>
         );
@@ -98,7 +98,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
           {/* Bold parsing highlight */}
           {line.split("**").map((part, pIdx) => {
             if (pIdx % 2 === 1) {
-              return <strong key={pIdx} className="text-[#d4af37] font-semibold">{part}</strong>;
+              return <strong key={pIdx} className="text-[#ffd700] font-semibold">{part}</strong>;
             }
             // Code block inside sentence parsing
             return part.split("`").map((subPart, sIdx) => {
@@ -181,10 +181,10 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
           >
             <div className="flex justify-between items-start gap-2 border-b border-[#2e3440] pb-2 mb-3">
               <div className="flex flex-col gap-1">
-                <span className="font-press text-[7px] text-[#4c566a] select-none">
+                <span className="font-press text-[7px] text-[#94a3b8] select-none">
                   LOG ENTRY // {post.publishedDate}
                 </span>
-                <h3 className="font-press text-[9px] text-[#d4af37] group-hover:text-[#f3e5ab] transition-colors leading-relaxed uppercase">
+                <h3 className="font-press text-[9px] text-[#ffd700] group-hover:text-[#ffea7f] transition-colors leading-relaxed uppercase">
                   {post.title}
                 </h3>
               </div>
@@ -196,8 +196,8 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
             </p>
 
             <div className="flex justify-between items-center pt-2 border-t border-[#2e3440]">
-              <span className="font-vt text-base text-[#4c566a]">Category: <span className="text-[#00a8ff]">{post.category}</span></span>
-              <span className="font-press text-[7px] text-[#d4af37] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform select-none">
+              <span className="font-vt text-base text-[#94a3b8]">Category: <span className="text-[#00a8ff]">{post.category}</span></span>
+              <span className="font-press text-[7px] text-[#ffd700] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform select-none">
                 READ LOG <ArrowRight className="w-3 h-3" />
               </span>
             </div>
@@ -223,10 +223,10 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
         <div className="border-b-4 border-[#2e3440] pb-4 mb-6">
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <PixelBadge variant="gold">{selectedPost.category}</PixelBadge>
-            <span className="font-press text-[7px] text-[#4c566a]">{selectedPost.publishedDate}</span>
-            <span className="font-vt text-base text-[#4c566a]">• {selectedPost.readingTime}</span>
+            <span className="font-press text-[7px] text-[#94a3b8]">{selectedPost.publishedDate}</span>
+            <span className="font-vt text-base text-[#94a3b8]">• {selectedPost.readingTime}</span>
           </div>
-          <h2 className="font-press text-xs md:text-sm text-[#d4af37] leading-relaxed uppercase">
+          <h2 className="font-press text-xs md:text-sm text-[#ffd700] leading-relaxed uppercase">
             {selectedPost.title}
           </h2>
         </div>
@@ -322,10 +322,10 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
           </>
         ) : (
           <>
-            <h2 className="font-press text-sm text-[#d4af37] uppercase tracking-widest select-none">
+            <h2 className="font-press text-sm text-[#ffd700] uppercase tracking-widest select-none pixel-text-shadow">
               📜 QUEST LOG (BLOG NOTES) 📜
             </h2>
-            <p className="font-vt text-lg text-[#4c566a] mt-2 select-none">
+            <p className="font-vt text-lg text-[#94a3b8] mt-2 select-none">
               Read detailed notes regarding technical challenges and resolutions
             </p>
           </>
@@ -358,7 +358,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-2.5 py-1 border-2 text-[8px] font-press uppercase select-none cursor-pointer
                     ${active 
-                      ? "bg-[#d4af37] text-black border-[#d4af37]" 
+                      ? "bg-[#ffd700] text-black border-[#ffd700]" 
                       : "bg-[#151821] text-[#ededed] border-[#4c566a] hover:bg-[#1e2230]"
                     }
                     shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]

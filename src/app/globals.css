@@ -9,9 +9,9 @@
   --color-rpg-card: #151821;
   --color-rpg-card-hover: #1e2230;
   
-  --color-rpg-gold: #d4af37;
-  --color-rpg-gold-light: #f3e5ab;
-  --color-rpg-gold-dark: #aa7c11;
+  --color-rpg-gold: #ffd700;
+  --color-rpg-gold-light: #fff3a8;
+  --color-rpg-gold-dark: #cda300;
   
   --color-rpg-mana: #00a8ff;
   --color-rpg-health: #ff4757;
@@ -38,6 +38,163 @@
   50% { opacity: 1; transform: scale(1.1); filter: brightness(1.2); }
 }
 
+@keyframes float-up {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-110vh) translateX(30px); opacity: 0; }
+}
+
+@keyframes dragon-fly-ltr {
+  0% { left: -100px; top: 12%; }
+  50% { top: 22%; }
+  100% { left: 100%; top: 10%; }
+}
+
+@keyframes dragon-fly-rtl {
+  0% { right: -100px; top: 20%; }
+  50% { top: 10%; }
+  100% { right: 100%; top: 25%; }
+}
+
+@keyframes dragon-wing-flap-frames {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4) translateY(4px); }
+}
+
+@keyframes flame-cycle {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes flame-cycle-inv {
+  0%, 49% { opacity: 0; }
+  50%, 100% { opacity: 1; }
+}
+
+@keyframes ember-float-1 {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-12px, -28px) scale(0.5); opacity: 0; }
+}
+
+@keyframes ember-float-2 {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(8px, -36px) scale(0.5); opacity: 0; }
+}
+
+@keyframes ember-float-3 {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-6px, -20px) scale(0.5); opacity: 0; }
+}
+
+@keyframes castle-glow-frames {
+  0%, 100% { fill: #f59e0b; opacity: 0.6; }
+  50% { fill: #ef4444; opacity: 0.95; }
+}
+
+.animate-float-up {
+  animation: float-up 10s linear infinite;
+}
+
+.animate-dragon-fly-slow {
+  animation: dragon-fly-ltr 38s linear infinite;
+}
+
+.animate-dragon-fly-fast {
+  animation: dragon-fly-rtl 25s linear infinite;
+}
+
+.animate-dragon-wing-flap {
+  animation: dragon-wing-flap-frames 0.3s steps(2) infinite;
+  transform-origin: center;
+}
+
+.animate-flame-1 {
+  animation: flame-cycle 0.4s steps(1) infinite;
+}
+
+.animate-flame-2 {
+  animation: flame-cycle-inv 0.4s steps(1) infinite;
+}
+
+.animate-ember-1 {
+  animation: ember-float-1 1.2s infinite ease-out;
+  transform-origin: center;
+}
+
+.animate-ember-2 {
+  animation: ember-float-2 1.5s infinite ease-out 0.4s;
+  transform-origin: center;
+}
+
+.animate-ember-3 {
+  animation: ember-float-3 1.0s infinite ease-out 0.8s;
+  transform-origin: center;
+}
+
+.animate-castle-glow {
+  animation: castle-glow-frames 6s ease-in-out infinite;
+}
+
+/* ── Dragon wing breathing (pixel steps) ── */
+@keyframes dragon-wings-breathe-frames {
+  0%, 100% { transform: rotate(0deg) scaleY(1); }
+  50%       { transform: rotate(-8deg) scaleY(0.92); }
+}
+
+.animate-dragon-wings-breathe-left {
+  animation: dragon-wings-breathe-frames 3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: right center;
+}
+
+.animate-dragon-wings-breathe-right {
+  animation: dragon-wings-breathe-frames 3s ease-in-out infinite 0.4s;
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+/* ── Dragon fire breath (pixel blocks fly left) ── */
+@keyframes dragon-breath-pixel-1 {
+  0%   { transform: translate(0px,  0px); opacity: 1; }
+  40%  { opacity: 1; }
+  100% { transform: translate(-48px, -8px); opacity: 0; }
+}
+@keyframes dragon-breath-pixel-2 {
+  0%   { transform: translate(0px,  0px); opacity: 1; }
+  40%  { opacity: 1; }
+  100% { transform: translate(-64px, 4px); opacity: 0; }
+}
+@keyframes dragon-breath-pixel-3 {
+  0%   { transform: translate(0px,  0px); opacity: 1; }
+  40%  { opacity: 1; }
+  100% { transform: translate(-36px, -12px); opacity: 0; }
+}
+
+.animate-db-1 {
+  animation: dragon-breath-pixel-1 1.8s steps(6) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.animate-db-2 {
+  animation: dragon-breath-pixel-2 2.0s steps(6) infinite 0.6s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.animate-db-3 {
+  animation: dragon-breath-pixel-3 1.5s steps(5) infinite 1.2s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* ── Knight cape flap (two-frame pixel toggle) ── */
+.animate-cape-1 {
+  animation: flame-cycle 0.35s steps(1) infinite;
+}
+.animate-cape-2 {
+  animation: flame-cycle-inv 0.35s steps(1) infinite;
+}
+
 /* Custom styles and utilities */
 :root {
   --rpg-bg: #0b0c10;
@@ -59,24 +216,24 @@ body {
   border-left: 4px solid #1e2230;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d4af37;
+  background: #ffd700;
   border: 3px solid #0b0c10;
-  box-shadow: 0 0 0 2px #d4af37;
+  box-shadow: 0 0 0 2px #ffd700;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #f3e5ab;
+  background: #fff3a8;
 }
 
 /* 8-bit Pixel Borders (Dual shade for depth) */
 .pixel-border-gold {
-  border: 4px solid #d4af37;
+  border: 4px solid #ffd700;
   position: relative;
   box-shadow:
     0 -4px 0 -2px #0b0c10,
     0 4px 0 -2px #0b0c10,
     -4px 0 0 -2px #0b0c10,
     4px 0 0 -2px #0b0c10,
-    inset 0 0 0 2px #5a450c;
+    inset 0 0 0 2px #856404;
 }
 
 .pixel-border-slate {
@@ -88,6 +245,17 @@ body {
     -4px 0 0 -2px #0b0c10,
     4px 0 0 -2px #0b0c10,
     inset 0 0 0 2px #2e3440;
+}
+
+.pixel-border-stone {
+  border: 4px solid #4a5568;
+  position: relative;
+  box-shadow:
+    0 -4px 0 -2px #0f172a,
+    0 4px 0 -2px #0f172a,
+    -4px 0 0 -2px #0f172a,
+    4px 0 0 -2px #0f172a,
+    inset 0 0 0 2px #2d3748;
 }
 
 .pixel-border-red {

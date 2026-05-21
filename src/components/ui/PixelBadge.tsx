@@ -12,7 +12,7 @@ export const PixelBadge: React.FC<PixelBadgeProps> = ({
   className = "",
 }) => {
   const badgeColors = {
-    gold: "bg-[#d4af37] text-black border-[#d4af37]",
+    gold: "bg-[#ffd700] text-black border-[#ffd700]",
     slate: "bg-[#2e3440] text-[#ededed] border-[#4c566a]",
     red: "bg-[#ff4757] text-white border-[#ff4757]",
     blue: "bg-[#00a8ff] text-white border-[#00a8ff]",

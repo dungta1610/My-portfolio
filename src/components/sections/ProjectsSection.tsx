@@ -81,10 +81,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
       >
         <div className="flex justify-between items-start gap-2 border-b border-[#2e3440] pb-2 mb-3">
           <div className="flex flex-col gap-1">
-            <span className="font-press text-[8px] text-[#4c566a] select-none">
+            <span className="font-press text-[8px] text-[#94a3b8] select-none">
               {project.featured ? "🛡️ MAIN QUEST" : "⚔️ SIDE QUEST"}
             </span>
-            <h3 className="font-press text-[10px] text-[#ededed] leading-relaxed uppercase group-hover:text-[#d4af37] transition-colors">
+            <h3 className="font-press text-[10px] text-[#ededed] leading-relaxed uppercase group-hover:text-[#ffd700] transition-colors">
               {project.name}
             </h3>
           </div>
@@ -98,18 +98,18 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
           </div>
         </div>
 
-        <p className="font-vt text-base leading-snug text-zinc-400 flex-1 mb-4 line-clamp-3">
+        <p className="font-vt text-base leading-snug text-zinc-200 flex-1 mb-4 line-clamp-3">
           {project.description}
         </p>
 
         {/* Quest Info */}
-        <div className="bg-[#0b0c10] p-2 border border-[#2e3440] mb-4 space-y-1 font-vt text-sm text-[#4c566a]">
+        <div className="bg-[#0b0c10] p-2 border border-[#2e3440] mb-4 space-y-1 font-vt text-sm text-[#94a3b8]">
           <div>
-            <span className="text-[#d4af37]">ROLE:</span> <span className="text-zinc-300">{project.role}</span>
+            <span className="text-[#ffd700]">ROLE:</span> <span className="text-zinc-200">{project.role}</span>
           </div>
           {project.stars > 0 && (
-            <div className="flex items-center gap-1.5 text-zinc-300">
-              <Star className="w-3.5 h-3.5 text-[#d4af37]" /> {project.stars} Stars
+            <div className="flex items-center gap-1.5 text-zinc-200">
+              <Star className="w-3.5 h-3.5 text-[#ffd700]" /> {project.stars} Stars
             </div>
           )}
         </div>
@@ -122,14 +122,14 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
             </span>
           ))}
           {project.techStack.length > 3 && (
-            <span className="text-[#4c566a] font-vt text-xs self-center ml-1">
+            <span className="text-[#94a3b8] font-vt text-xs self-center ml-1">
               +{project.techStack.length - 3} more
             </span>
           )}
         </div>
 
-        <div className="pt-2 border-t border-[#2e3440] text-right">
-          <span className="font-press text-[7px] text-[#d4af37] flex items-center justify-end gap-1 group-hover:translate-x-1 transition-transform">
+        <div className="flex pt-2 border-t border-[#2e3440] text-right">
+          <span className="w-full font-press text-[7px] text-[#ffd700] flex items-center justify-end gap-1 group-hover:translate-x-1 transition-transform">
             OPEN JOURNAL &raquo;
           </span>
         </div>
@@ -201,10 +201,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
           </>
         ) : (
           <>
-            <h2 className="font-press text-sm text-[#d4af37] uppercase tracking-widest select-none">
+            <h2 className="font-press text-sm text-[#ffd700] uppercase tracking-widest select-none pixel-text-shadow">
               🗺️ DUNGEON MAP (PROJECTS) 🗺️
             </h2>
-            <p className="font-vt text-lg text-[#4c566a] mt-2 select-none">
+            <p className="font-vt text-lg text-[#94a3b8] mt-2 select-none">
               Select a dungeon chamber to read its Quest Journal (Mini Case Study)
             </p>
           </>
@@ -236,8 +236,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
                 onClick={() => setActiveFilter(filter.value)}
                 className={`px-2.5 py-1.5 border-2 text-[8px] font-press uppercase select-none transition-all duration-75 cursor-pointer
                   ${active 
-                    ? "bg-[#d4af37] text-black border-[#d4af37]" 
-                    : "bg-[#151821] text-[#ededed] border-[#4c566a] hover:bg-[#1e2230]"
+                    ? "bg-[#ffd700] text-black border-[#ffd700]" 
+                    : "bg-[#151821] text-[#ededed] border-[#94a3b8] hover:bg-[#1e2230] hover:border-[#ffd700]"
                   }
                   shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]
                 `}
@@ -261,7 +261,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
           {recruiterMode ? (
             <p className="text-zinc-500 text-sm">No projects found matching the active filter.</p>
           ) : (
-            <div className="inline-block p-4 border-2 border-dashed border-[#4c566a] font-vt text-lg text-[#4c566a] select-none">
+            <div className="inline-block p-4 border-2 border-dashed border-[#ffd700] font-vt text-lg text-[#94a3b8] select-none">
               🔒 DUNGEON IS LOCKED (No matching projects found)
             </div>
           )}

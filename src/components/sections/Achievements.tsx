@@ -50,7 +50,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ recruiterMode }) => 
   const renderRPG = () => {
     return (
       <section id="achievements" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#d4af37] mb-8 text-center uppercase tracking-widest select-none">
+        <h2 className="font-press text-sm text-[#ffd700] mb-8 text-center uppercase tracking-widest select-none pixel-text-shadow">
           🏆 THE TROPHY ROOM (RELICS) 🏆
         </h2>
 
@@ -59,19 +59,19 @@ export const Achievements: React.FC<AchievementsProps> = ({ recruiterMode }) => 
             <PixelCard 
               key={idx} 
               variant={item.color} 
-              className="flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-transform"
+              className="flex flex-col justify-between relative overflow-visible group hover:scale-[1.02] transition-transform"
             >
               <div>
                 {/* Visual Relic Icon Display */}
-                <div className="w-12 h-12 bg-[#0b0c10] border-2 border-[#d4af37] flex items-center justify-center text-[#d4af37] mb-4 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                <div className="w-12 h-12 bg-[#0b0c10] border-2 border-[#ffd700] flex items-center justify-center text-[#ffd700] mb-4 shadow-[0_0_10px_rgba(255,215,0,0.2)]">
                   <Trophy className="w-5 h-5 animate-sparkle" />
                 </div>
 
                 <div className="mb-2">
-                  <span className="font-press text-[7px] text-[#4c566a] block uppercase mb-1">
+                  <span className="font-press text-[7px] text-[#94a3b8] block uppercase mb-1">
                     RELIC: {item.rpgItem}
                   </span>
-                  <h3 className="font-press text-[9px] text-[#d4af37] uppercase leading-relaxed">
+                  <h3 className="font-press text-[9px] text-[#ffd700] uppercase leading-relaxed">
                     {item.title}
                   </h3>
                   <p className="font-vt text-base text-zinc-300 font-semibold mt-1">

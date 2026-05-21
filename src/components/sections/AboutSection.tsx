@@ -22,7 +22,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ recruiterMode }) => 
   const renderRPG = () => {
     return (
       <section id="about" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#d4af37] mb-8 text-center uppercase tracking-widest select-none">
+        <h2 className="font-press text-sm text-[#ffd700] mb-8 text-center uppercase tracking-widest select-none pixel-text-shadow">
           ⚔️ HERO CHARACTER SHEET ⚔️
         </h2>
 
@@ -34,15 +34,15 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ recruiterMode }) => 
               <Sword className="w-4 h-4 text-[#ff4757]" /> Equipped Weapons
             </h3>
             
-            <p className="font-vt text-lg text-zinc-300 leading-relaxed">
+            <p className="font-vt text-lg text-zinc-150 leading-relaxed">
               These are the technical languages and frameworks equipped for active development pipelines:
             </p>
 
             <div className="grid grid-cols-2 gap-3 pt-2">
               {weapons.map((w, idx) => (
                 <div key={idx} className="flex items-center gap-2 font-vt text-lg bg-[#0b0c10] p-2 border border-[#2e3440]">
-                  <span className="text-[#d4af37]">&#9733;</span>
-                  <span>{w}</span>
+                  <span className="text-[#ffd700]">&#9733;</span>
+                  <span className="text-white">{w}</span>
                 </div>
               ))}
             </div>
@@ -51,7 +51,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ recruiterMode }) => 
               <h4 className="font-press text-[8px] text-[#00a8ff] uppercase mb-1.5">
                 Current Quest Route
               </h4>
-              <p className="font-vt text-lg text-zinc-400">
+              <p className="font-vt text-lg text-zinc-200">
                 Gaining deep experience in event-driven backend microservices, containerization workflows, and custom server-side LLM integrations.
               </p>
             </div>
@@ -68,9 +68,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ recruiterMode }) => 
                 <div key={idx} className="bg-[#0b0c10] p-2.5 border border-[#2e3440]">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-press text-[7px] text-[#2ed573]">{trait.name}</span>
-                    <span className="font-press text-[6px] text-[#4c566a]">PASSIVE</span>
+                    <span className="font-press text-[6px] text-[#94a3b8]">PASSIVE</span>
                   </div>
-                  <p className="font-vt text-base text-zinc-400 leading-tight">
+                  <p className="font-vt text-base text-zinc-200 leading-tight">
                     {trait.desc}
                   </p>
                 </div>

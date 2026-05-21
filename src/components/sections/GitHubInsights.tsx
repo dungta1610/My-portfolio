@@ -30,7 +30,7 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
   const languageColors: Record<string, string> = {
     Go: "bg-[#00a8ff] shadow-[0_0_8px_rgba(0,168,255,0.4)]",
     Golang: "bg-[#00a8ff] shadow-[0_0_8px_rgba(0,168,255,0.4)]",
-    TypeScript: "bg-[#d4af37] shadow-[0_0_8px_rgba(212,175,55,0.4)]",
+    TypeScript: "bg-[#ffd700] shadow-[0_0_8px_rgba(255,215,0,0.4)]",
     "React/NextJS": "bg-[#2ed573] shadow-[0_0_8px_rgba(46,213,115,0.4)]",
     JavaScript: "bg-[#8e44ad] shadow-[0_0_8px_rgba(142,68,173,0.4)]",
     Python: "bg-[#ff4757] shadow-[0_0_8px_rgba(255,71,87,0.4)]",
@@ -49,7 +49,7 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
   const renderRPG = () => {
     return (
       <section id="insights" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#d4af37] mb-8 text-center uppercase tracking-widest select-none">
+        <h2 className="font-press text-sm text-[#ffd700] mb-8 text-center uppercase tracking-widest select-none pixel-text-shadow">
           🔮 GUILD INTELLIGENCE (GITHUB INSIGHTS) 🔮
         </h2>
 
@@ -100,10 +100,10 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
               {recentUpdates.map((repo) => (
                 <div key={repo.id} className="bg-[#0b0c10] p-2.5 border border-[#2e3440] flex justify-between items-center gap-2">
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-press text-[8px] text-[#d4af37] truncate uppercase">
+                    <h4 className="font-press text-[8px] text-[#ffd700] truncate uppercase">
                       {repo.name}
                     </h4>
-                    <p className="font-vt text-base text-[#4c566a] flex items-center gap-1.5 mt-0.5 select-none">
+                    <p className="font-vt text-base text-[#94a3b8] flex items-center gap-1.5 mt-0.5 select-none">
                       <Calendar className="w-3.5 h-3.5" /> Updated: {new Date(repo.lastUpdated).toLocaleDateString()}
                     </p>
                   </div>

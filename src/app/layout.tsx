@@ -40,7 +40,7 @@ export default function RootLayout({
       lang="en"
       className={`${pressStart2P.variable} ${vt323.variable} ${outfit.variable} h-full scroll-smooth`}
     >
-      <body className="min-h-full bg-[#0b0c10] text-[#ededed] font-sans antialiased selection:bg-[#d4af37] selection:text-black">
+      <body className="min-h-full bg-[#0b0c10] text-[#ededed] font-sans antialiased selection:bg-[#ffd700] selection:text-black">
         {children}
       </body>
     </html>

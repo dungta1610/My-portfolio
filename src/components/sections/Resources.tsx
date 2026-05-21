@@ -40,10 +40,10 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
   const renderRPG = () => {
     return (
       <section id="resources" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#d4af37] mb-4 text-center uppercase tracking-widest select-none">
+        <h2 className="font-press text-sm text-[#ffd700] mb-4 text-center uppercase tracking-widest select-none pixel-text-shadow">
           🐉 DRAGON EGG VAULT (RESOURCES) 🐉
         </h2>
-        <p className="font-vt text-lg text-[#4c566a] mb-8 text-center select-none">
+        <p className="font-vt text-lg text-[#94a3b8] mb-8 text-center select-none">
           Bookmarks and scrolls saved on my development journey
         </p>
 
@@ -57,7 +57,7 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
                 onClick={() => setSelectedTag(tag)}
                 className={`px-2 py-1 border-2 text-[8px] font-press uppercase select-none cursor-pointer
                   ${active 
-                    ? "bg-[#d4af37] text-black border-[#d4af37]" 
+                    ? "bg-[#ffd700] text-black border-[#ffd700]" 
                     : "bg-[#151821] text-[#ededed] border-[#4c566a] hover:bg-[#1e2230]"
                   }
                   shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]
@@ -78,7 +78,7 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
                 <div>
                   <div className="flex justify-between items-start gap-2 border-b border-[#2e3440] pb-2 mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-[#0b0c10] border border-[#d4af37] flex items-center justify-center text-[#d4af37] shadow-sm select-none">
+                      <div className="w-8 h-8 bg-[#0b0c10] border border-[#ffd700] flex items-center justify-center text-[#ffd700] shadow-sm select-none">
                         <Icon className="w-4 h-4" />
                       </div>
                       <h3 className="font-press text-[9px] text-[#ededed] uppercase leading-relaxed line-clamp-1">
@@ -97,19 +97,19 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
                   {/* Tag List */}
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {item.tags.map((tag) => (
-                      <span key={tag} className="font-vt text-xs text-[#d4af37] bg-[#0b0c10] border border-[#2e3440] px-1.5 py-0.5">
+                      <span key={tag} className="font-vt text-xs text-[#ffd700] bg-[#0b0c10] border border-[#2e3440] px-1.5 py-0.5">
                         #{tag}
                       </span>
                     ))}
                   </div>
 
                   <div className="pt-2 border-t border-[#2e3440] flex justify-between items-center">
-                    <span className="font-vt text-xs text-[#4c566a]">Saved: {item.savedDate}</span>
+                    <span className="font-vt text-xs text-[#94a3b8]">Saved: {item.savedDate}</span>
                     <a 
                       href={item.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="font-press text-[7px] text-[#d4af37] hover:text-[#f3e5ab] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
+                      className="font-press text-[7px] text-[#ffd700] hover:text-[#ffea7f] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
                     >
                       CLAIM ITEM <ExternalLink className="w-2.5 h-2.5" />
                     </a>

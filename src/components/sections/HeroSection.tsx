@@ -5,6 +5,7 @@ import { GitHubProfileStats } from "../../types/portfolio";
 import { PixelCard } from "../ui/PixelCard";
 import { PixelButton } from "../ui/PixelButton";
 import { PixelBadge } from "../ui/PixelBadge";
+import { PixelCampfire } from "../ui/PixelCampfire";
 
 interface HeroSectionProps {
   stats: GitHubProfileStats | null;
@@ -23,10 +24,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ stats, recruiterMode }
   const renderRPG = () => {
     return (
       <section id="hero" className="py-12 px-4 max-w-5xl mx-auto">
-        <PixelCard variant="gold" glowing className="relative overflow-hidden">
+        <PixelCard variant="gold" glowing className="relative overflow-visible">
           
           {/* Section Indicator */}
-          <div className="absolute top-0 right-0 bg-[#d4af37] text-black font-press text-[8px] px-3 py-1 uppercase shadow-md select-none">
+          <div className="absolute top-0 right-0 bg-[#ffd700] text-black font-press text-[8px] px-3 py-1 uppercase shadow-md select-none">
             🛡️ ACTIVE HERO
           </div>
 
@@ -34,30 +35,38 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ stats, recruiterMode }
             
             {/* Left: Avatar & Pixel Frames */}
             <div className="flex flex-col items-center">
-              <div className="w-40 h-40 bg-[#1e2230] border-4 border-[#d4af37] pixel-border-gold p-1 relative group">
+               <PixelCard variant="gold" showDragon={false} className="w-40 h-40 p-0.5 relative group overflow-visible">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={stats?.avatarUrl || "https://avatars.githubusercontent.com/u/86794511?v=4"}
                   alt="Ta Duc Dung Avatar"
                   className="w-full h-full object-cover pixelated"
                 />
-                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
+                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 z-20">
                   <PixelBadge variant="gold">LEVEL 20</PixelBadge>
                 </div>
-              </div>
+              </PixelCard>
               
               <h2 className="font-press text-[12px] text-[#ededed] mt-6 tracking-wide text-center">
                 DUNG TA
               </h2>
-              <p className="font-vt text-lg text-[#4c566a] mt-1 text-center select-none">
+              <p className="font-vt text-lg text-[#94a3b8] mt-1 text-center select-none">
                 &lt;juntaaa / dungta1610&gt;
               </p>
+
+              {/* Cozy Campfire campsite */}
+              <div className="mt-6 w-full max-w-[180px] bg-[#10121a]/85 border-2 border-[#4c566a] p-2.5 flex flex-col items-center relative overflow-hidden select-none shadow-[inset_0_0_8px_rgba(0,0,0,0.8)]">
+                <div className="font-press text-[7px] text-[#ff4757] uppercase mb-2 animate-pulse tracking-widest text-center">
+                  🔥 Resting at Bonfire
+                </div>
+                <PixelCampfire className="w-full" />
+              </div>
             </div>
 
             {/* Middle: Stats & Attributes */}
             <div className="md:col-span-2 space-y-5">
               <div className="border-b border-[#2e3440] pb-2">
-                <h1 className="font-press text-lg md:text-xl text-[#d4af37] tracking-wider uppercase leading-snug">
+                <h1 className="font-press text-lg md:text-xl text-[#ffd700] pixel-text-shadow tracking-wider uppercase leading-snug">
                   Ta Duc Dung
                 </h1>
                 <p className="font-press text-[9px] text-[#ff4757] uppercase tracking-wider mt-1 select-none">
@@ -66,32 +75,32 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ stats, recruiterMode }
               </div>
 
               {/* Character Attributes Sheet */}
-              <div className="grid grid-cols-2 gap-3 font-vt text-lg bg-[#0b0c10] p-4 border-2 border-[#2e3440]">
+              <div className="grid grid-cols-2 gap-3 font-vt text-lg bg-[#0b0c10] p-4 border-2 border-[#4c566a]">
                 <div>
-                  <span className="text-[#4c566a] uppercase">ATK (Go / C++):</span> <span className="text-white">99/99</span>
+                  <span className="text-[#94a3b8] uppercase">ATK (Go / C++):</span> <span className="text-white">99/99</span>
                 </div>
                 <div>
-                  <span className="text-[#4c566a] uppercase">DEF (Next.js):</span> <span className="text-white">88/99</span>
+                  <span className="text-[#94a3b8] uppercase">DEF (Next.js):</span> <span className="text-white">88/99</span>
                 </div>
                 <div>
-                  <span className="text-[#4c566a] uppercase">DEX (Algorithms):</span> <span className="text-white">90/99</span>
+                  <span className="text-[#94a3b8] uppercase">DEX (Algorithms):</span> <span className="text-white">90/99</span>
                 </div>
                 <div>
-                  <span className="text-[#4c566a] uppercase">INT (Systems):</span> <span className="text-white">92/99</span>
+                  <span className="text-[#94a3b8] uppercase">INT (Systems):</span> <span className="text-white">92/99</span>
                 </div>
                 <div>
-                  <span className="text-[#4c566a] uppercase">REPOS CLEARED:</span> <span className="text-[#d4af37]">{stats?.publicRepos || 14}</span>
+                  <span className="text-[#94a3b8] uppercase">REPOS CLEARED:</span> <span className="text-[#ffd700]">{stats?.publicRepos || 14}</span>
                 </div>
                 <div>
-                  <span className="text-[#4c566a] uppercase">PARTY MEMBERS:</span> <span className="text-[#00a8ff]">{stats?.followers || 4} Followers</span>
+                  <span className="text-[#94a3b8] uppercase">PARTY MEMBERS:</span> <span className="text-[#00a8ff]">{stats?.followers || 4} Followers</span>
                 </div>
               </div>
 
               {/* Bio description */}
-              <div className="bg-[#1e2230]/40 p-3.5 border-l-4 border-[#d4af37] font-vt text-lg leading-relaxed text-zinc-300">
+              <div className="bg-[#1e2230]/40 p-3.5 border-l-4 border-[#ffd700] font-vt text-lg leading-relaxed text-zinc-150">
                 &ldquo;Aspiring Software Engineer focused on problem-solving, scalable systems, and building reliable user interfaces for AI-driven, cloud-based products.&rdquo;
-                <div className="mt-2 text-sm text-[#4c566a]">
-                  <span className="text-[#d4af37]">Current Quest:</span> Seeking backend/microservices roles and practical AI integrations.
+                <div className="mt-2 text-sm text-[#94a3b8]">
+                  <span className="text-[#ffd700]">Current Quest:</span> Seeking backend/microservices roles and practical AI integrations.
                 </div>
               </div>
 

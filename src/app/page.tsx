@@ -17,6 +17,7 @@ import { GitHubProfileStats, Project } from "../types/portfolio";
 import { PixelCard } from "../components/ui/PixelCard";
 import { PixelButton } from "../components/ui/PixelButton";
 import { RefreshCw, Swords, ShieldCheck, Heart } from "lucide-react";
+import { DungeonBackground } from "../components/ui/DungeonBackground";
 
 export default function Home() {
   const [recruiterMode, setRecruiterMode] = useState(false);
@@ -82,13 +83,13 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center p-6 text-center select-none">
         <div className="space-y-6 max-w-md w-full">
-          <div className="font-press text-[12px] text-[#d4af37] animate-pulse">
+          <div className="font-press text-[12px] text-[#ffd700] animate-pulse">
             ⚔️ SUMMONING ADVENTURER DATA...
           </div>
-          <div className="w-full bg-[#151821] border-4 border-[#4c566a] h-6 p-0.5 relative pixel-border-slate">
-            <div className="h-full bg-[#d4af37] animate-[sparkle_1.5s_infinite]" style={{ width: "65%" }} />
+          <div className="w-full bg-[#151821] border-4 border-[#94a3b8] h-6 p-0.5 relative pixel-border-slate">
+            <div className="h-full bg-[#ffd700] animate-[sparkle_1.5s_infinite]" style={{ width: "65%" }} />
           </div>
-          <p className="font-vt text-xl text-zinc-500">
+          <p className="font-vt text-xl text-zinc-400">
             Fetching stats from the GitHub ledger & loading maps
           </p>
         </div>
@@ -104,9 +105,9 @@ export default function Home() {
           <h2 className="font-press text-[10px] text-[#ff4757] uppercase tracking-wider">
             ❌ SYSTEM BREACH (LOADING ERROR)
           </h2>
-          <p className="font-vt text-lg text-zinc-300">
+          <p className="font-vt text-lg text-zinc-200">
             The server was unable to retrieve data.
-            <span className="block text-sm text-[#4c566a] mt-1">({error})</span>
+            <span className="block text-sm text-[#94a3b8] mt-1">({error})</span>
           </p>
           <div className="pt-2">
             <PixelButton variant="red" onClick={fetchPortfolioData} className="flex items-center gap-1.5 mx-auto">
@@ -119,7 +120,8 @@ export default function Home() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${recruiterMode ? "bg-zinc-950 font-sans" : "bg-[#0b0c10] pixel-bg-dungeon"}`}>
+    <div className={`min-h-screen flex flex-col relative ${recruiterMode ? "bg-zinc-950 font-sans" : "bg-[#0b0c10] pixel-bg-dungeon"}`}>
+      {!recruiterMode && <DungeonBackground />}
       
       {/* Header Selector */}
       {recruiterMode ? (
@@ -198,7 +200,7 @@ export default function Home() {
       <footer className={`py-8 text-center text-xs tracking-wider border-t
         ${recruiterMode 
           ? "bg-zinc-900 border-zinc-800 text-zinc-500 font-sans" 
-          : "bg-[#151821] border-[#d4af37] border-t-4 text-[#4c566a] font-press text-[7px]"
+          : "bg-[#151821] border-[#ffd700] border-t-4 text-[#94a3b8] font-press text-[7px]"
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">

@@ -14,7 +14,7 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
   ...props
 }) => {
   const bgColors = {
-    gold: "bg-[#d4af37] text-black border-[#d4af37] hover:bg-[#f3e5ab] active:bg-[#aa7c11] focus:ring-[#d4af37]",
+    gold: "bg-[#ffd700] text-black border-[#ffd700] hover:bg-[#ffea7f] active:bg-[#ccac00] focus:ring-[#ffd700]",
     slate: "bg-[#2e3440] text-[#ededed] border-[#4c566a] hover:bg-[#434c5e] active:bg-[#20242c] focus:ring-[#4c566a]",
     red: "bg-[#ff4757] text-white border-[#ff4757] hover:bg-[#ff6b81] active:bg-[#ff1f30] focus:ring-[#ff4757]",
     blue: "bg-[#00a8ff] text-white border-[#00a8ff] hover:bg-[#33b8ff] active:bg-[#0088cc] focus:ring-[#00a8ff]",
