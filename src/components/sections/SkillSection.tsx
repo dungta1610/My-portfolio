@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { PixelCard } from "../ui/PixelCard";
-import { PixelBadge } from "../ui/PixelBadge";
-import { Check, Lock, Cpu, Sparkles, Database, Code, BookOpen, Settings } from "lucide-react";
+import { DashboardCard } from "../ui/DashboardCard";
+import { DashboardBadge } from "../ui/DashboardBadge";
+import { DashboardButton } from "../ui/DashboardButton";
+import { Lock, Cpu, Code, Database, BookOpen, Settings } from "lucide-react";
 import { SkillNode } from "../../types/portfolio";
+import { useReactorState } from "../../context/ReactorContext";
 
 interface SkillSectionProps {
   recruiterMode: boolean;
@@ -10,6 +12,7 @@ interface SkillSectionProps {
 
 export const SkillSection: React.FC<SkillSectionProps> = ({ recruiterMode }) => {
   const [selectedGroup, setSelectedGroup] = useState<string>("All");
+  const { setHoveredSkillGroup } = useReactorState();
 
   const skills: SkillNode[] = [
     // Languages
@@ -46,82 +49,87 @@ export const SkillSection: React.FC<SkillSectionProps> = ({ recruiterMode }) => 
   ];
 
   const categories = [
-    { label: "All nodes", value: "All", icon: Cpu },
-    { label: "Languages & Core", value: "theory", icon: Code },
-    { label: "Backend Core", value: "backend", icon: Settings },
-    { label: "Databases", value: "database", icon: Database },
-    { label: "Frontend Core", value: "frontend", icon: BookOpen },
+    { label: "ALL NODES", value: "All", icon: Cpu },
+    { label: "LANGUAGES & CORE", value: "theory", icon: Code },
+    { label: "BACKEND CORE", value: "backend", icon: Settings },
+    { label: "DATABASES", value: "database", icon: Database },
+    { label: "FRONTEND CORE", value: "frontend", icon: BookOpen },
   ];
 
   const filteredSkills = selectedGroup === "All"
     ? skills
     : skills.filter(s => s.category === selectedGroup);
 
-  // RPG Skill Node Render
-  const renderRPGNode = (skill: SkillNode, idx: number) => {
+  // Dashboard Skill Node Render
+  const renderDashboardNode = (skill: SkillNode, idx: number) => {
     if (!skill.unlocked) {
       return (
-        <div 
+        <DashboardCard
           key={idx}
-          className="p-3 relative border-4 flex items-center justify-between bg-[#0b0c10] border-[#2e3440] opacity-45 shadow-[inset_0_0_8px_rgba(0,0,0,0.8)] select-none"
+          variant="slate"
+          glowing={false}
+          className="p-4 border-dashed border-zinc-800/60 bg-zinc-950/40 opacity-40 select-none"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 flex items-center justify-center">
-              <Lock className="w-3.5 h-3.5 text-[#ff4757]" />
-            </div>
-            <div>
-              <h4 className="font-press text-[9px] text-[#ededed]">
-                {skill.name}
-              </h4>
-              <div className="flex gap-0.5 mt-1">
-                <span className="font-press text-[7px] text-[#ff4757] uppercase tracking-tight">
-                  LOCKED
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Lock className="w-4 h-4 text-rose-500/80" />
+              <div>
+                <h4 className="font-mono text-xs font-semibold text-zinc-500">
+                  {skill.name}
+                </h4>
+                <span className="font-mono text-[9px] text-rose-500/60 tracking-wider">
+                  SYS_ROADMAP
                 </span>
               </div>
             </div>
           </div>
-        </div>
+        </DashboardCard>
       );
     }
 
+    const levelColors = skill.isMain ? "bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)]" : "bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]";
+
     return (
-      <PixelCard 
+      <DashboardCard
         key={idx}
-        variant={skill.isMain ? "gold" : "slate"}
-        showDragon={false}
-        className="p-3 flex items-center justify-between transition-all select-none"
+        variant={skill.isMain ? "cyan" : "violet"}
+        glowing={skill.isMain}
+        tabIndex={0}
+        onMouseEnter={() => setHoveredSkillGroup(skill.category)}
+        onMouseLeave={() => setHoveredSkillGroup(null)}
+        onFocus={() => setHoveredSkillGroup(skill.category)}
+        onBlur={() => setHoveredSkillGroup(null)}
+        className="p-4 select-none relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-cyan-500/50"
       >
-        <div className="flex items-center gap-2.5">
-          {/* Unlock symbol */}
-          <div className="w-5 h-5 flex items-center justify-center">
-            <span className={`font-press text-[8px] ${skill.isMain ? "text-[#ffd700]" : "text-[#2ed573]"}`}>
-              &#9670;
-            </span>
-          </div>
-          <div>
-            <h4 className={`font-press text-[9px] ${skill.isMain ? "text-[#ffd700]" : "text-[#ededed]"}`}>
+        <div className="flex flex-col gap-2.5 z-10">
+          <div className="flex items-center justify-between">
+            <h4 className={`font-mono text-sm font-semibold tracking-wide ${skill.isMain ? "text-cyan-400" : "text-violet-400"}`}>
               {skill.name}
             </h4>
-            <div className="flex gap-0.5 mt-1">
+            {skill.isMain && (
+              <DashboardBadge variant="cyan" className="text-[8px] px-1 py-0.5">
+                PRIMARY
+              </DashboardBadge>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between mt-1">
+            <div className="flex gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span 
-                  key={i} 
-                  className={`font-press text-[7px] ${i < skill.level ? "text-[#ffd700]" : "text-[#94a3b8]"}`}
-                >
-                  &#9733;
-                </span>
+                <span
+                  key={i}
+                  className={`h-1.5 w-3.5 rounded-sm transition-all duration-300 ${
+                    i < skill.level ? levelColors : "bg-zinc-800"
+                  }`}
+                />
               ))}
             </div>
+            <span className="font-mono text-[10px] text-zinc-500">
+              LVL {skill.level}/5
+            </span>
           </div>
         </div>
-
-        {/* Floating Indicator */}
-        {skill.isMain && (
-          <span className="absolute -top-2.5 -right-2 bg-[#ff4757] text-white font-press text-[6px] px-1 py-0.5 uppercase tracking-wide shadow-md z-20">
-            MASTER
-          </span>
-        )}
-      </PixelCard>
+      </DashboardCard>
     );
   };
 
@@ -144,7 +152,7 @@ export const SkillSection: React.FC<SkillSectionProps> = ({ recruiterMode }) => 
               {skill.name}
             </span>
             <span className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">
-              {skill.unlocked ? skill.isMain ? "Primary" : "Secondary" : "Planned Quest"}
+              {skill.unlocked ? skill.isMain ? "Primary" : "Secondary" : "Roadmap Lock"}
             </span>
           </div>
 
@@ -166,10 +174,10 @@ export const SkillSection: React.FC<SkillSectionProps> = ({ recruiterMode }) => 
   };
 
   return (
-    <section id="skills" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
+    <section id="skills" className="py-16 px-4 max-w-5xl mx-auto scroll-mt-20">
       
       {/* Title */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-10">
         {recruiterMode ? (
           <>
             <span className="text-amber-500 text-xs font-semibold uppercase tracking-widest block mb-1">
@@ -179,60 +187,47 @@ export const SkillSection: React.FC<SkillSectionProps> = ({ recruiterMode }) => 
           </>
         ) : (
           <>
-            <h2 className="font-press text-sm text-[#ffd700] uppercase tracking-widest select-none pixel-text-shadow">
-              🌲 ACTIVE SKILL TREE 🌲
+            <span className="text-cyan-400 font-mono text-xs uppercase tracking-widest block mb-2">
+              [SYS_TELEMETRY] CAPABILITIES
+            </span>
+            <h2 className="text-3xl font-extrabold text-zinc-100 tracking-tight">
+              Capability Matrix
             </h2>
-            <p className="font-vt text-lg text-[#94a3b8] mt-2 select-none">
-              Explore capabilities and upcoming unlocks in the tech stack
+            <p className="text-sm text-zinc-400 mt-2 max-w-xl mx-auto font-mono">
+              Real-time snapshot of programming languages, infrastructure nodes, and system capabilities.
             </p>
           </>
         )}
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
+      <div className="flex flex-wrap justify-center gap-3 mb-10">
         {categories.map((cat) => {
           const IconComponent = cat.icon;
           const active = selectedGroup === cat.value;
-          if (recruiterMode) {
-            return (
-              <button
-                key={cat.value}
-                onClick={() => setSelectedGroup(cat.value)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer
-                  ${active
-                    ? "bg-amber-500 text-zinc-950 border-amber-500"
-                    : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
-                  }`}
-              >
-                <IconComponent className="w-3.5 h-3.5" />
-                {cat.label}
-              </button>
-            );
-          } else {
-            return (
-              <button
-                key={cat.value}
-                onClick={() => setSelectedGroup(cat.value)}
-                className={`px-3 py-1.5 border-2 text-[8px] font-press uppercase select-none transition-all duration-75 cursor-pointer
-                  ${active
-                    ? "bg-[#ffd700] text-black border-[#ffd700]"
-                    : "bg-[#151821] text-[#ededed] border-[#4c566a]"
-                  }
-                  shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]
-                `}
-              >
-                {cat.label}
-              </button>
-            );
-          }
+          return (
+            <DashboardButton
+              key={cat.value}
+              variant={active ? "cyan" : "slate"}
+              recruiterMode={recruiterMode}
+              onClick={() => setSelectedGroup(cat.value)}
+              onMouseEnter={() => setHoveredSkillGroup(cat.value === "All" ? null : cat.value)}
+              onMouseLeave={() => setHoveredSkillGroup(null)}
+              onFocus={() => setHoveredSkillGroup(cat.value === "All" ? null : cat.value)}
+              onBlur={() => setHoveredSkillGroup(null)}
+              className="flex items-center gap-2 cursor-pointer font-mono"
+            >
+              <IconComponent className="w-3.5 h-3.5" />
+              <span>{cat.label}</span>
+            </DashboardButton>
+          );
         })}
       </div>
 
       {/* Tree Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredSkills.map((skill, idx) => 
-          recruiterMode ? renderRecruiterNode(skill, idx) : renderRPGNode(skill, idx)
+          recruiterMode ? renderRecruiterNode(skill, idx) : renderDashboardNode(skill, idx)
         )}
       </div>
 

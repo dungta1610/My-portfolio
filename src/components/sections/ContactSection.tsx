@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Mail, FileDown, Send, CornerDownRight, CheckCircle } from "lucide-react";
+import { Mail, FileDown, Send, CheckCircle, Terminal, Link as LinkIcon } from "lucide-react";
 import { Github, Linkedin } from "../ui/Icons";
-import { PixelCard } from "../ui/PixelCard";
-import { PixelButton } from "../ui/PixelButton";
-import { PixelBadge } from "../ui/PixelBadge";
+import { DashboardCard } from "../ui/DashboardCard";
+import { DashboardButton } from "../ui/DashboardButton";
+import { DashboardBadge } from "../ui/DashboardBadge";
 
 interface ContactSectionProps {
   recruiterMode: boolean;
@@ -33,38 +33,43 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
     }, 1500);
   };
 
-  // RPG View
-  const renderRPG = () => {
+  // Dashboard View
+  const renderDashboard = () => {
     return (
-      <section id="contact" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#ffd700] mb-4 text-center uppercase tracking-widest select-none pixel-text-shadow">
-          🍺 THE TAVERN (GUILD HALL) 🍺
-        </h2>
-        <p className="font-vt text-lg text-[#94a3b8] mb-8 text-center select-none">
-          Leave a message on the tavern board or summon me directly
-        </p>
+      <section id="contact" className="py-16 px-4 max-w-5xl mx-auto scroll-mt-20">
+        <div className="text-center mb-10">
+          <span className="text-cyan-400 font-mono text-xs uppercase tracking-widest block mb-2">
+            [SYS_TRANS] ESTABLISH CONNECTION
+          </span>
+          <h2 className="text-3xl font-extrabold text-zinc-100 tracking-tight">
+            Telemetry Transmission
+          </h2>
+          <p className="text-sm text-zinc-400 mt-2 max-w-xl mx-auto font-mono">
+            Initialize high-priority transmission routes to reach the operator console directly.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           
           {/* Summon Coordinates */}
-          <PixelCard variant="slate" className="space-y-5">
-            <h3 className="font-press text-[10px] text-[#ff4757] uppercase border-b border-[#2e3440] pb-2">
-              📜 SUMMONING COORDINATES
+          <DashboardCard variant="slate" glowing={false} className="space-y-6">
+            <h3 className="font-mono text-xs font-bold text-cyan-400 border-b border-zinc-800/80 pb-2.5 flex items-center gap-2 uppercase tracking-wider">
+              <Terminal className="w-4 h-4 text-cyan-400" /> TRANSMISSION_COORDINATES
             </h3>
 
-            <div className="space-y-4 font-vt text-lg text-zinc-300">
-              <p>
-                Summon a message carrier or join the party via these scrolls:
+            <div className="space-y-4 font-mono text-xs text-zinc-400">
+              <p className="leading-relaxed">
+                Connect via secure external protocols or fetch current operations payload:
               </p>
 
               <a 
                 href="mailto:dungta386469@gmail.com" 
-                className="flex items-center gap-3 p-3 bg-[#0b0c10] border border-[#2e3440] hover:border-[#ffd700] transition-all group"
+                className="flex items-center gap-3 p-3 bg-zinc-950/60 border border-zinc-800/80 hover:border-cyan-500/50 rounded-lg transition-all group"
               >
-                <Mail className="w-5 h-5 text-[#ff4757] group-hover:scale-110 transition-transform" />
+                <Mail className="w-5 h-5 text-cyan-400 group-hover:scale-105 transition-transform" />
                 <div>
-                  <span className="text-xs text-[#94a3b8] block uppercase font-press text-[7px]">Carrier Mail</span>
-                  <span className="text-[#ededed] font-mono text-base">dungta386469@gmail.com</span>
+                  <span className="text-[9px] text-zinc-500 block uppercase tracking-wider">Direct Email</span>
+                  <span className="text-zinc-200 text-xs font-semibold">dungta386469@gmail.com</span>
                 </div>
               </a>
 
@@ -72,12 +77,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
                 href="https://www.linkedin.com/in/d%C5%A9ng-t%E1%BA%A1-417112218/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center gap-3 p-3 bg-[#0b0c10] border border-[#2e3440] hover:border-[#ffd700] transition-all group"
+                className="flex items-center gap-3 p-3 bg-zinc-950/60 border border-zinc-800/80 hover:border-violet-500/50 rounded-lg transition-all group"
               >
-                <Linkedin className="w-5 h-5 text-[#00a8ff] group-hover:scale-110 transition-transform" />
+                <Linkedin className="w-5 h-5 text-violet-400 group-hover:scale-105 transition-transform" />
                 <div>
-                  <span className="text-xs text-[#94a3b8] block uppercase font-press text-[7px]">Guild Link</span>
-                  <span className="text-zinc-200">linkedin.com/in/dung-ta</span>
+                  <span className="text-[9px] text-zinc-500 block uppercase tracking-wider">LinkedIn Net</span>
+                  <span className="text-zinc-200 text-xs font-semibold">linkedin.com/in/dung-ta</span>
                 </div>
               </a>
 
@@ -85,95 +90,92 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
                 href="https://github.com/dungta1610" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center gap-3 p-3 bg-[#0b0c10] border border-[#2e3440] hover:border-[#ffd700] transition-all group"
+                className="flex items-center gap-3 p-3 bg-zinc-950/60 border border-zinc-800/80 hover:border-cyan-500/50 rounded-lg transition-all group"
               >
-                <Github className="w-5 h-5 text-[#ededed] group-hover:scale-110 transition-transform" />
+                <Github className="w-5 h-5 text-zinc-100 group-hover:scale-105 transition-transform" />
                 <div>
-                  <span className="text-xs text-[#94a3b8] block uppercase font-press text-[7px]">Scroll Vault</span>
-                  <span className="text-zinc-200">github.com/dungta1610</span>
+                  <span className="text-[9px] text-zinc-500 block uppercase tracking-wider">VCS Profile</span>
+                  <span className="text-zinc-200 text-xs font-semibold">github.com/dungta1610</span>
                 </div>
               </a>
             </div>
 
-            <div className="pt-4 border-t border-[#2e3440] text-center">
-              <a href="/resume.pdf" download="Ta_Duc_Dung_Resume.pdf">
-                <PixelButton variant="gold" className="w-full">
-                  Get Character Scroll (CV)
-                </PixelButton>
+            <div className="pt-4 border-t border-zinc-800/80 text-center">
+              <a href="/resume.pdf" download="Ta_Duc_Dung_Resume.pdf" className="block">
+                <DashboardButton variant="cyan" className="w-full justify-center flex items-center gap-2 cursor-pointer">
+                  <FileDown className="w-3.5 h-3.5" /> DOWNLOAD OPERATIONS PAYLOAD (CV)
+                </DashboardButton>
               </a>
             </div>
-          </PixelCard>
+          </DashboardCard>
 
           {/* Contact Form */}
-          <PixelCard variant="gold">
-            <h3 className="font-press text-[10px] text-[#ffd700] uppercase border-b border-[#2e3440] pb-2 mb-4">
-              ✍️ PIN MESSAGE ON BOARD
+          <DashboardCard variant="cyan" glowing={false}>
+            <h3 className="font-mono text-xs font-bold text-cyan-400 border-b border-zinc-800/80 pb-2.5 mb-5 uppercase tracking-wider">
+              ✍️ BROADCAST_MESSAGE
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block font-press text-[8px] text-[#94a3b8] uppercase mb-1.5">
-                  Adventurer Name
+                <label className="block font-mono text-[9px] text-zinc-500 uppercase tracking-widest mb-1.5">
+                  OPERATOR_NAME
                 </label>
                 <input 
                   type="text" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  placeholder="e.g. Sir Galahad"
-                  className="w-full p-2.5 bg-[#0b0c10] border-2 border-[#94a3b8] font-vt text-lg text-white focus:border-[#ffd700] outline-none
-                    shadow-[inset_0_0_8px_rgba(0,0,0,0.8)]"
+                  placeholder="e.g. Lead Recruiter"
+                  className="w-full px-3 py-2 bg-zinc-950/80 border border-zinc-800 rounded-lg font-mono text-xs text-zinc-100 placeholder-zinc-600 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/40 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-press text-[8px] text-[#94a3b8] uppercase mb-1.5">
-                  Sender Return Address (Email)
+                <label className="block font-mono text-[9px] text-zinc-500 uppercase tracking-widest mb-1.5">
+                  RETURN_ADDRESS_EMAIL
                 </label>
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="galahad@camelot.org"
-                  className="w-full p-2.5 bg-[#0b0c10] border-2 border-[#94a3b8] font-vt text-lg text-white focus:border-[#ffd700] outline-none
-                    shadow-[inset_0_0_8px_rgba(0,0,0,0.8)]"
+                  placeholder="operator@system.org"
+                  className="w-full px-3 py-2 bg-zinc-950/80 border border-zinc-800 rounded-lg font-mono text-xs text-zinc-100 placeholder-zinc-600 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/40 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-press text-[8px] text-[#94a3b8] uppercase mb-1.5">
-                  Quest Description (Message)
+                <label className="block font-mono text-[9px] text-zinc-500 uppercase tracking-widest mb-1.5">
+                  TRANSMISSION_PAYLOAD
                 </label>
                 <textarea 
                   rows={4}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   required
-                  placeholder="I have a backend raid that requires your system weapons..."
-                  className="w-full p-2.5 bg-[#0b0c10] border-2 border-[#94a3b8] font-vt text-lg text-white focus:border-[#ffd700] outline-none resize-none
-                    shadow-[inset_0_0_8px_rgba(0,0,0,0.8)]"
+                  placeholder="We have active missions that require backend performance tuning..."
+                  className="w-full px-3 py-2 bg-zinc-950/80 border border-zinc-800 rounded-lg font-mono text-xs text-zinc-100 placeholder-zinc-600 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/40 outline-none resize-none"
                 />
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                <span className="font-vt text-xs text-[#ff4757] uppercase tracking-wide">
-                  * FRONTEND-ONLY PREVIEW
+                <span className="font-mono text-[9px] text-rose-500/60 uppercase">
+                  * FRONTEND_PREVIEW_ONLY
                 </span>
                 
-                <PixelButton type="submit" variant={loading ? "slate" : "emerald"} disabled={loading}>
-                  {loading ? "SENDING..." : "DISPATCH MESSENGER"}
-                </PixelButton>
+                <DashboardButton type="submit" variant={loading ? "slate" : "cyan"} disabled={loading} className="cursor-pointer">
+                  {loading ? "TRANSMITTING..." : "DISPATCH_PACKET"}
+                </DashboardButton>
               </div>
             </form>
 
             {sent && (
-              <div className="mt-4 p-3 border-2 border-[#2ed573] bg-[#0f1712] font-vt text-lg text-zinc-200 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-[#2ed573] flex-shrink-0" />
-                <span>Messenger summoned! (Mock message submitted successfully)</span>
+              <div className="mt-4 p-3 border border-emerald-500/30 bg-emerald-500/5 font-mono text-xs text-emerald-400 rounded-lg flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>Message successfully broadcasted! (Mock submit successful)</span>
               </div>
             )}
-          </PixelCard>
+          </DashboardCard>
 
         </div>
       </section>
@@ -183,7 +185,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
   // Recruiter View
   const renderRecruiter = () => {
     return (
-      <section id="contact" className="py-12 px-6 max-w-5xl mx-auto scroll-mt-20">
+      <section id="contact" className="py-16 px-6 max-w-5xl mx-auto scroll-mt-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
           
           {/* Info Column */}
@@ -325,5 +327,5 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
     );
   };
 
-  return recruiterMode ? renderRecruiter() : renderRPG();
+  return recruiterMode ? renderRecruiter() : renderDashboard();
 };

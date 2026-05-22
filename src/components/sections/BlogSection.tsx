@@ -1,10 +1,58 @@
 import React, { useState } from "react";
 import { BLOG_POSTS } from "../../data/blog-posts";
-import { PixelCard } from "../ui/PixelCard";
-import { PixelBadge } from "../ui/PixelBadge";
-import { PixelButton } from "../ui/PixelButton";
-import { BookOpen, Calendar, Clock, ChevronLeft, ArrowRight, CornerDownRight } from "lucide-react";
+import { DashboardCard } from "../ui/DashboardCard";
+import { DashboardBadge } from "../ui/DashboardBadge";
+import { DashboardButton } from "../ui/DashboardButton";
+import { ChevronLeft, ArrowRight, Terminal, Calendar, Clock } from "lucide-react";
 import { BlogPost } from "../../types/portfolio";
+
+const DashboardBlogPostCard: React.FC<{ post: BlogPost; onClick: () => void }> = ({ post, onClick }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+      className="group cursor-pointer"
+    >
+      <DashboardCard 
+        variant="slate" 
+        glowing={isHovered}
+        className={`p-6 relative transition-all duration-300 ${
+          isHovered ? "-translate-y-1.5" : ""
+        }`}
+      >
+        <div className="flex flex-col gap-2.5">
+          <div className="flex justify-between items-start gap-2 border-b border-zinc-800/80 pb-2.5 mb-2">
+            <div className="flex flex-col gap-1">
+              <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
+                <Terminal className="w-3 h-3 text-cyan-400" /> SYS_LOG // ENTRY_{post.id}
+              </span>
+              <h3 className="font-mono text-sm font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors tracking-wide leading-relaxed">
+                {post.title}
+              </h3>
+            </div>
+            <DashboardBadge variant="cyan">{post.readingTime}</DashboardBadge>
+          </div>
+
+          <p className="text-xs text-zinc-400 leading-relaxed mb-3 font-sans">
+            {post.summary}
+          </p>
+
+          <div className="flex justify-between items-center pt-2.5 border-t border-zinc-800/80">
+            <span className="font-mono text-[9px] text-zinc-500 flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5" /> {post.publishedDate}
+            </span>
+            <span className="font-mono text-[10px] text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform select-none">
+              READ_LOG <ArrowRight className="w-3 h-3" />
+            </span>
+          </div>
+        </div>
+      </DashboardCard>
+    </div>
+  );
+};
 
 interface BlogSectionProps {
   recruiterMode: boolean;
@@ -26,12 +74,11 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
     ? BLOG_POSTS
     : BLOG_POSTS.filter(post => post.category.includes(selectedCategory) || selectedCategory.includes(post.category));
 
-  // Simple, robust inline custom markdown formatter
+  // Custom Markdown renderer for terminal-themed log output
   const renderMarkdown = (md: string) => {
     const lines = md.split("\n");
     let isCodeBlock = false;
     let codeContent: string[] = [];
-    let codeLang = "";
 
     return lines.map((line, idx) => {
       // Code Block Toggles
@@ -43,14 +90,13 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
           return (
             <pre 
               key={idx} 
-              className="bg-[#0b0c10] border-2 border-[#2e3440] p-4 my-4 font-mono text-sm overflow-x-auto text-emerald-400 select-all"
+              className="bg-zinc-950 border border-zinc-800/80 p-4 my-4 rounded-lg font-mono text-xs overflow-x-auto text-emerald-400/90 select-all"
             >
               <code>{displayCode}</code>
             </pre>
           );
         } else {
           isCodeBlock = true;
-          codeLang = line.replace("```", "").trim();
           return null;
         }
       }
@@ -65,15 +111,15 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
       // Headers
       if (trimmed.startsWith("### ")) {
         return (
-          <h4 key={idx} className="font-press text-[10px] text-[#ffd700] mt-6 mb-3 uppercase tracking-wide">
-            {trimmed.replace("### ", "")}
+          <h4 key={idx} className="font-mono text-xs font-bold text-cyan-400 mt-6 mb-2 tracking-wide uppercase">
+            &gt; {trimmed.replace("### ", "")}
           </h4>
         );
       }
       if (trimmed.startsWith("## ")) {
         return (
-          <h3 key={idx} className="font-press text-xs text-[#ff4757] mt-8 mb-4 uppercase tracking-wider">
-            {trimmed.replace("## ", "")}
+          <h3 key={idx} className="font-mono text-sm font-bold text-violet-400 mt-8 mb-3 tracking-wide uppercase border-b border-zinc-800 pb-1.5">
+            &gt;&gt; {trimmed.replace("## ", "")}
           </h3>
         );
       }
@@ -81,7 +127,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
       // Bullets
       if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
         return (
-          <li key={idx} className="list-disc ml-6 my-2 font-vt text-lg text-zinc-300">
+          <li key={idx} className="list-disc ml-5 my-1.5 text-xs text-zinc-300 leading-relaxed font-sans">
             {trimmed.substring(2)}
           </li>
         );
@@ -89,21 +135,19 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
 
       // Empty Lines
       if (trimmed === "") {
-        return <div key={idx} className="h-3" />;
+        return <div key={idx} className="h-3.5" />;
       }
 
       // Default paragraph
       return (
-        <p key={idx} className="font-vt text-lg text-zinc-300 leading-relaxed my-2">
-          {/* Bold parsing highlight */}
+        <p key={idx} className="text-xs text-zinc-300 leading-relaxed my-2 font-sans">
           {line.split("**").map((part, pIdx) => {
             if (pIdx % 2 === 1) {
-              return <strong key={pIdx} className="text-[#ffd700] font-semibold">{part}</strong>;
+              return <strong key={pIdx} className="text-cyan-400/95 font-semibold">{part}</strong>;
             }
-            // Code block inside sentence parsing
             return part.split("`").map((subPart, sIdx) => {
               if (sIdx % 2 === 1) {
-                return <code key={sIdx} className="bg-[#0b0c10] border border-[#2e3440] px-1 py-0.5 rounded text-sm text-[#00a8ff] font-mono">{subPart}</code>;
+                return <code key={sIdx} className="bg-zinc-950 border border-zinc-800 px-1.5 py-0.5 rounded text-[11px] text-violet-400 font-mono">{subPart}</code>;
               }
               return subPart;
             });
@@ -113,7 +157,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
     });
   };
 
-  // Recruiter layout parser (renders using clean sans fonts)
+  // Recruiter layout parser
   const renderRecruiterMarkdown = (md: string) => {
     const lines = md.split("\n");
     let isCodeBlock = false;
@@ -168,65 +212,47 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
     });
   };
 
-  // RPG List View
-  const renderRPGList = () => {
+  // Dashboard List View
+  const renderDashboardList = () => {
     return (
       <div className="space-y-6">
         {filteredPosts.map((post) => (
-          <PixelCard 
+          <DashboardBlogPostCard 
             key={post.id} 
-            variant="slate" 
+            post={post} 
             onClick={() => setSelectedPost(post)}
-            className="group cursor-pointer hover:bg-[#1e2230]"
-          >
-            <div className="flex justify-between items-start gap-2 border-b border-[#2e3440] pb-2 mb-3">
-              <div className="flex flex-col gap-1">
-                <span className="font-press text-[7px] text-[#94a3b8] select-none">
-                  LOG ENTRY // {post.publishedDate}
-                </span>
-                <h3 className="font-press text-[9px] text-[#ffd700] group-hover:text-[#ffea7f] transition-colors leading-relaxed uppercase">
-                  {post.title}
-                </h3>
-              </div>
-              <PixelBadge variant="slate">{post.readingTime}</PixelBadge>
-            </div>
-
-            <p className="font-vt text-lg text-zinc-400 leading-relaxed mb-4">
-              {post.summary}
-            </p>
-
-            <div className="flex justify-between items-center pt-2 border-t border-[#2e3440]">
-              <span className="font-vt text-base text-[#94a3b8]">Category: <span className="text-[#00a8ff]">{post.category}</span></span>
-              <span className="font-press text-[7px] text-[#ffd700] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform select-none">
-                READ LOG <ArrowRight className="w-3 h-3" />
-              </span>
-            </div>
-          </PixelCard>
+          />
         ))}
       </div>
     );
   };
 
-  // RPG Single Reader View
-  const renderRPGReader = () => {
+  // Dashboard Single Reader View
+  const renderDashboardReader = () => {
     if (!selectedPost) return null;
     return (
-      <PixelCard variant="gold" className="relative">
-        <button 
+      <DashboardCard variant="slate" glowing={true} className="p-6 md:p-8">
+        <DashboardButton 
           onClick={() => setSelectedPost(null)}
-          className="mb-6 border-2 border-[#4c566a] bg-[#2e3440] hover:border-[#ff4757] px-3 py-1 font-press text-[8px] text-white hover:text-[#ff4757] flex items-center gap-1 cursor-pointer
-            shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]"
+          className="mb-6 cursor-pointer font-mono"
+          variant="slate"
         >
-          <ChevronLeft className="w-3.5 h-3.5" /> Return to Logs
-        </button>
+          <span className="flex items-center gap-1.5">
+            <ChevronLeft className="w-4 h-4" /> RETURN_TO_LOGS
+          </span>
+        </DashboardButton>
 
-        <div className="border-b-4 border-[#2e3440] pb-4 mb-6">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <PixelBadge variant="gold">{selectedPost.category}</PixelBadge>
-            <span className="font-press text-[7px] text-[#94a3b8]">{selectedPost.publishedDate}</span>
-            <span className="font-vt text-base text-[#94a3b8]">• {selectedPost.readingTime}</span>
+        <div className="border-b border-zinc-800 pb-4 mb-6">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-500 mb-2">
+            <DashboardBadge variant="cyan">{selectedPost.category}</DashboardBadge>
+            <span className="font-mono text-[10px] flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5 text-zinc-500" /> {selectedPost.publishedDate}
+            </span>
+            <span className="font-mono text-[10px] flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5 text-zinc-500" /> {selectedPost.readingTime}
+            </span>
           </div>
-          <h2 className="font-press text-xs md:text-sm text-[#ffd700] leading-relaxed uppercase">
+          <h2 className="font-mono text-lg md:text-xl font-bold text-zinc-100 tracking-wide uppercase leading-relaxed">
             {selectedPost.title}
           </h2>
         </div>
@@ -236,12 +262,16 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
           {renderMarkdown(selectedPost.contentMarkdown)}
         </div>
 
-        <div className="mt-8 pt-4 border-t-4 border-[#2e3440]">
-          <PixelButton variant="gold" onClick={() => setSelectedPost(null)}>
-            Back to Journal
-          </PixelButton>
+        <div className="mt-8 pt-4 border-t border-zinc-800">
+          <DashboardButton 
+            onClick={() => setSelectedPost(null)}
+            className="cursor-pointer font-mono"
+            variant="slate"
+          >
+            RETURN_TO_LOGS
+          </DashboardButton>
         </div>
-      </PixelCard>
+      </DashboardCard>
     );
   };
 
@@ -309,10 +339,10 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
   };
 
   return (
-    <section id="blog" className="py-12 px-4 max-w-4xl mx-auto scroll-mt-20">
+    <section id="blog" className="py-16 px-4 max-w-4xl mx-auto scroll-mt-20">
       
       {/* Title */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-10">
         {recruiterMode ? (
           <>
             <span className="text-amber-500 text-xs font-semibold uppercase tracking-widest block mb-1">
@@ -322,11 +352,14 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
           </>
         ) : (
           <>
-            <h2 className="font-press text-sm text-[#ffd700] uppercase tracking-widest select-none pixel-text-shadow">
-              📜 QUEST LOG (BLOG NOTES) 📜
+            <span className="text-cyan-400 font-mono text-xs uppercase tracking-widest block mb-2">
+              [SYS_JOURNAL] MONOSPACE LOGS
+            </span>
+            <h2 className="text-3xl font-extrabold text-zinc-100 tracking-tight">
+              System Logs & Journals
             </h2>
-            <p className="font-vt text-lg text-[#94a3b8] mt-2 select-none">
-              Read detailed notes regarding technical challenges and resolutions
+            <p className="text-sm text-zinc-400 mt-2 max-w-xl mx-auto font-mono">
+              In-depth technical papers covering race condition mitigation, client-side caching, and reliability engineering.
             </p>
           </>
         )}
@@ -334,49 +367,29 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ recruiterMode }) => {
 
       {/* Category selector (only show if not reading a post) */}
       {!selectedPost && (
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-2.5 mb-10">
           {categories.map((cat) => {
             const active = selectedCategory === cat;
-            if (recruiterMode) {
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer
-                    ${active 
-                      ? "bg-amber-500 text-zinc-950 border-amber-500" 
-                      : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
-                    }`}
-                >
-                  {cat}
-                </button>
-              );
-            } else {
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1 border-2 text-[8px] font-press uppercase select-none cursor-pointer
-                    ${active 
-                      ? "bg-[#ffd700] text-black border-[#ffd700]" 
-                      : "bg-[#151821] text-[#ededed] border-[#4c566a] hover:bg-[#1e2230]"
-                    }
-                    shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]
-                  `}
-                >
-                  {cat}
-                </button>
-              );
-            }
+            return (
+              <DashboardButton
+                key={cat}
+                variant={active ? "cyan" : "slate"}
+                recruiterMode={recruiterMode}
+                onClick={() => setSelectedCategory(cat)}
+                className="font-mono text-[10px] cursor-pointer"
+              >
+                {cat}
+              </DashboardButton>
+            );
           })}
         </div>
       )}
 
       {/* Main Content Area */}
       {selectedPost ? (
-        recruiterMode ? renderRecruiterReader() : renderRPGReader()
+        recruiterMode ? renderRecruiterReader() : renderDashboardReader()
       ) : (
-        recruiterMode ? renderRecruiterList() : renderRPGList()
+        recruiterMode ? renderRecruiterList() : renderDashboardList()
       )}
 
     </section>

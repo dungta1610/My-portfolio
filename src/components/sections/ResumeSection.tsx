@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { PixelCard } from "../ui/PixelCard";
-import { PixelButton } from "../ui/PixelButton";
-import { Calendar, Briefcase, GraduationCap, Award, FileDown, AlertCircle } from "lucide-react";
+import { DashboardCard } from "../ui/DashboardCard";
+import { DashboardButton } from "../ui/DashboardButton";
+import { Calendar, Briefcase, GraduationCap, FileDown, AlertCircle, Terminal } from "lucide-react";
 
 interface ResumeSectionProps {
   recruiterMode: boolean;
@@ -60,21 +60,24 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
     }
   ];
 
-  // RPG View
-  const renderRPG = () => {
+  // Dashboard / Interactive Mode View
+  const renderDashboard = () => {
     return (
       <section id="resume" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#ffd700] mb-8 text-center uppercase tracking-widest select-none pixel-text-shadow">
-          📜 GUILD RECORD (JOURNEY TIMELINE) 📜
-        </h2>
+        <div className="flex items-center justify-center gap-2 mb-8 select-none">
+          <Terminal className="w-5 h-5 text-cyan-400 text-glow-cyan animate-pulse" />
+          <h2 className="font-mono text-sm text-cyan-400 text-glow-cyan uppercase tracking-widest text-center">
+            // TELEMETRY LOGS // CAREER TIMELINE
+          </h2>
+        </div>
 
         {/* Warning Banner if resume is missing */}
         {resumeMissing && (
-          <div className="mb-6 p-4 border-2 border-[#ff4757] bg-[#1c1214] flex items-start gap-3 shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]">
-            <AlertCircle className="w-5 h-5 text-[#ff6b81] flex-shrink-0 mt-0.5" />
-            <div className="font-vt text-lg text-[#ededed]">
-              <span className="text-[#ff6b81] font-press text-[8px] block mb-1">ALERT: FILE MISSING</span>
-              Resume file not added yet. Place <code className="text-[#ff6b81]">resume.pdf</code> inside the <code className="bg-[#0b0c10] px-1.5 py-0.5 rounded text-sm">/public</code> directory.
+          <div className="mb-6 p-4 border border-rose-500/30 bg-[#12080a] flex items-start gap-3 rounded-lg shadow-[inset_0_0_10px_rgba(244,63,94,0.05)]">
+            <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+            <div className="font-mono text-xs text-slate-300">
+              <span className="text-rose-400 font-bold block mb-1">WARNING // FILE_NOT_FOUND</span>
+              Telemetry source <code className="text-rose-400 font-bold">resume.pdf</code> is missing from target <code className="bg-[#05070d] px-1.5 py-0.5 rounded border border-slate-800 text-[10px]">/public</code> layout.
             </div>
           </div>
         )}
@@ -83,35 +86,38 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
           {experiences.map((exp, idx) => {
             const isEdu = exp.type === "education";
             return (
-              <PixelCard key={idx} variant={isEdu ? "blue" : "slate"} className="relative">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#2e3440] pb-2 mb-3">
+              <DashboardCard key={idx} variant={isEdu ? "blue" : "slate"} className="relative">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-3 mb-4">
                   <div>
-                    <h3 className="font-press text-[10px] text-[#ffd700] uppercase flex items-center gap-2">
+                    <h3 className="font-mono text-xs text-cyan-400 font-bold uppercase flex items-center gap-2">
                       {isEdu ? (
-                        <GraduationCap className="w-4 h-4 text-[#00a8ff]" />
+                        <GraduationCap className="w-4 h-4 text-cyan-400" />
                       ) : (
-                        <Briefcase className="w-4 h-4 text-[#a0aec0]" />
+                        <Briefcase className="w-4 h-4 text-violet-400" />
                       )}
                       {exp.title}
                     </h3>
-                    <p className="font-vt text-lg text-zinc-150 mt-1">
+                    <p className="text-sm font-semibold text-slate-200 mt-1">
                       {exp.organization}
                     </p>
                   </div>
-                  <div className="mt-2 md:mt-0 flex flex-col md:items-end">
-                    <span className="font-press text-[7px] text-[#94a3b8] flex items-center gap-1.5">
+                  <div className="mt-2 md:mt-0 flex flex-col md:items-end font-mono text-[10px]">
+                    <span className="text-slate-400 flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5" /> {exp.time}
                     </span>
-                    <span className="font-vt text-sm text-[#94a3b8] mt-0.5">{exp.location}</span>
+                    <span className="text-slate-500 mt-0.5">{exp.location}</span>
                   </div>
                 </div>
 
-                <ul className="list-disc pl-5 font-vt text-lg text-zinc-150 space-y-1.5 leading-relaxed">
+                <ul className="space-y-2 text-sm text-slate-300">
                   {exp.description.map((bullet, bIdx) => (
-                    <li key={bIdx}>{bullet}</li>
+                    <li key={bIdx} className="flex items-start gap-2">
+                      <span className="text-cyan-500 font-mono select-none mt-0.5">»</span>
+                      <span>{bullet}</span>
+                    </li>
                   ))}
                 </ul>
-              </PixelCard>
+              </DashboardCard>
             );
           })}
         </div>
@@ -119,9 +125,9 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
         {/* Download Action */}
         <div className="mt-8 text-center">
           <a href="/resume.pdf" download="Ta_Duc_Dung_Resume.pdf">
-            <PixelButton variant="gold" className="flex items-center gap-1.5 mx-auto">
-              <FileDown className="w-4 h-4 text-black" /> Retrieve Adventurer Scroll (Download CV)
-            </PixelButton>
+            <DashboardButton variant="gold" className="flex items-center gap-1.5 mx-auto">
+              <FileDown className="w-4 h-4" /> Download PDF Resume
+            </DashboardButton>
           </a>
         </div>
       </section>
@@ -191,5 +197,5 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
     );
   };
 
-  return recruiterMode ? renderRecruiter() : renderRPG();
+  return recruiterMode ? renderRecruiter() : renderDashboard();
 };

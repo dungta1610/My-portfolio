@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { RPGHeader } from "../components/layout/RPGHeader";
-import { RecruiterHeader } from "../components/layout/RecruiterHeader";
-import { HeroSection } from "../components/sections/HeroSection";
+import { DashboardHeader } from "../components/layout/DashboardHeader";
+import { CommandCenterHero } from "../components/sections/CommandCenterHero";
+import { RecruiterSnapshot } from "../components/sections/RecruiterSnapshot";
 import { AboutSection } from "../components/sections/AboutSection";
 import { ResumeSection } from "../components/sections/ResumeSection";
 import { ProjectsSection } from "../components/sections/ProjectsSection";
@@ -14,14 +14,23 @@ import { BlogSection } from "../components/sections/BlogSection";
 import { GitHubInsights } from "../components/sections/GitHubInsights";
 import { ContactSection } from "../components/sections/ContactSection";
 import { GitHubProfileStats, Project } from "../types/portfolio";
-import { PixelCard } from "../components/ui/PixelCard";
-import { PixelButton } from "../components/ui/PixelButton";
-import { RefreshCw, Swords, ShieldCheck, Heart } from "lucide-react";
-import { DungeonBackground } from "../components/ui/DungeonBackground";
+import { DashboardCard } from "../components/ui/DashboardCard";
+import { DashboardButton } from "../components/ui/DashboardButton";
+import { RefreshCw, Heart } from "lucide-react";
+import { SectionReveal } from "../components/effects/SectionReveal";
+import { LivingArchitectureBackground } from "../components/effects/LivingArchitectureBackground";
+import { ReactorProvider, useReactorState } from "../context/ReactorContext";
 
-export default function Home() {
-  const [recruiterMode, setRecruiterMode] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
+function DashboardContent() {
+  const {
+    recruiterMode,
+    setRecruiterMode,
+    activeSection,
+    setActiveSection,
+    hoveredProjectId,
+    setHoveredProjectId,
+  } = useReactorState();
+
   const [profile, setProfile] = useState<GitHubProfileStats | null>(null);
   const [repos, setRepos] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +72,7 @@ export default function Home() {
             setActiveSection(id);
           }
         },
-        { threshold: 0.25, rootMargin: "-80px 0px -20%" }
+        { threshold: 0.25, rootMargin: "-72px 0px -20%" }
       );
       observer.observe(el);
       return { observer, el };
@@ -81,16 +90,16 @@ export default function Home() {
   // Loading States
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center p-6 text-center select-none">
+      <div className="min-h-screen bg-[#05070d] flex items-center justify-center p-6 text-center select-none">
         <div className="space-y-6 max-w-md w-full">
-          <div className="font-press text-[12px] text-[#ffd700] animate-pulse">
-            ⚔️ SUMMONING ADVENTURER DATA...
+          <div className="font-mono text-xs text-cyan-400 animate-pulse tracking-widest">
+            [SYS_INIT] CONNECTING TELEMETRY BUS...
           </div>
-          <div className="w-full bg-[#151821] border-4 border-[#94a3b8] h-6 p-0.5 relative pixel-border-slate">
-            <div className="h-full bg-[#ffd700] animate-[sparkle_1.5s_infinite]" style={{ width: "65%" }} />
+          <div className="w-full bg-zinc-950 border border-zinc-800 rounded-lg h-3 p-0.5 relative">
+            <div className="h-full rounded bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)] animate-pulse" style={{ width: "65%" }} />
           </div>
-          <p className="font-vt text-xl text-zinc-400">
-            Fetching stats from the GitHub ledger & loading maps
+          <p className="font-mono text-xs text-zinc-500">
+            Retrieving operator metrics from VCS registry
           </p>
         </div>
       </div>
@@ -100,107 +109,115 @@ export default function Home() {
   // Error States
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0b0c10] flex items-center justify-center p-6 text-center">
-        <PixelCard variant="red" className="max-w-md w-full space-y-4">
-          <h2 className="font-press text-[10px] text-[#ff4757] uppercase tracking-wider">
-            ❌ SYSTEM BREACH (LOADING ERROR)
+      <div className="min-h-screen bg-[#05070d] flex items-center justify-center p-6 text-center">
+        <DashboardCard variant="red" className="max-w-md w-full space-y-4">
+          <h2 className="font-mono text-xs text-red-500 font-bold uppercase tracking-wider">
+            ❌ COMPILATION FAULT (FETCH_ERROR)
           </h2>
-          <p className="font-vt text-lg text-zinc-200">
-            The server was unable to retrieve data.
-            <span className="block text-sm text-[#94a3b8] mt-1">({error})</span>
+          <p className="font-mono text-xs text-zinc-400 leading-relaxed">
+            The server was unable to retrieve data packages.
+            <span className="block text-[11px] text-zinc-500 mt-1">({error})</span>
           </p>
           <div className="pt-2">
-            <PixelButton variant="red" onClick={fetchPortfolioData} className="flex items-center gap-1.5 mx-auto">
-              <RefreshCw className="w-3.5 h-3.5" /> Retarget Endpoint
-            </PixelButton>
+            <DashboardButton variant="red" onClick={fetchPortfolioData} className="flex items-center gap-1.5 mx-auto font-mono text-xs cursor-pointer">
+              <RefreshCw className="w-3.5 h-3.5" /> RETARGET_ENDPOINT
+            </DashboardButton>
           </div>
-        </PixelCard>
+        </DashboardCard>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen flex flex-col relative ${recruiterMode ? "bg-zinc-950 font-sans" : "bg-[#0b0c10] pixel-bg-dungeon"}`}>
-      {!recruiterMode && <DungeonBackground />}
+    <div className={`min-h-screen flex flex-col relative ${recruiterMode ? "bg-zinc-950 font-sans" : "bg-[#05070d]"}`}>
+      <LivingArchitectureBackground />
       
-      {/* Header Selector */}
-      {recruiterMode ? (
-        <RecruiterHeader 
-          recruiterMode={recruiterMode} 
-          setRecruiterMode={setRecruiterMode} 
-          activeSection={activeSection}
-        />
-      ) : (
-        <RPGHeader 
-          recruiterMode={recruiterMode} 
-          setRecruiterMode={setRecruiterMode} 
-          activeSection={activeSection}
-        />
-      )}
+      {/* Navigation Header */}
+      <DashboardHeader 
+        recruiterMode={recruiterMode} 
+        setRecruiterMode={setRecruiterMode} 
+        activeSection={activeSection}
+      />
 
-      {/* Main Sections */}
+      {/* Main Content Areas */}
       <main className="flex-grow pb-24">
         
-        {/* Floating recruiter banner in RPG Mode */}
-        {!recruiterMode && (
-          <div className="max-w-5xl mx-auto px-4 mt-6">
-            <div className="bg-[#151821] border-2 border-[#ff4757] p-3 text-center flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]">
-              <span className="font-press text-[8px] text-[#ff4757] uppercase">
-                🛡️ HR COORDINATOR / TECH RECRUITER?
-              </span>
-              <span className="font-vt text-base text-zinc-300">
-                Switch to Recruiter Mode for a clean, direct, print-friendly layout.
-              </span>
-              <PixelButton variant="red" onClick={() => setRecruiterMode(true)}>
-                Engage Shield
-              </PixelButton>
-            </div>
-          </div>
-        )}
+        {/* Recruiter Quick Snapshot Banner */}
+        <RecruiterSnapshot 
+          stats={profile} 
+          recruiterMode={recruiterMode} 
+          setRecruiterMode={setRecruiterMode} 
+        />
 
-        {/* Sections */}
-        <HeroSection stats={profile} recruiterMode={recruiterMode} />
-        <AboutSection recruiterMode={recruiterMode} />
+        {/* Content sections */}
+        <SectionReveal>
+          <CommandCenterHero 
+            stats={profile} 
+            recruiterMode={recruiterMode} 
+            hoveredProjectId={hoveredProjectId} 
+            activeSection={activeSection}
+          />
+        </SectionReveal>
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal delay={100}>
+          <AboutSection recruiterMode={recruiterMode} />
+        </SectionReveal>
         
-        <ResumeSection recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal>
+          <ResumeSection recruiterMode={recruiterMode} />
+        </SectionReveal>
         
-        <ProjectsSection projects={repos} recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal>
+          <ProjectsSection projects={repos} recruiterMode={recruiterMode} onHoverProjectChange={setHoveredProjectId} />
+        </SectionReveal>
         
-        <SkillSection recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal>
+          <SkillSection recruiterMode={recruiterMode} />
+        </SectionReveal>
         
-        <Achievements recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal>
+          <Achievements recruiterMode={recruiterMode} />
+        </SectionReveal>
         
-        <Resources recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal>
+          <Resources recruiterMode={recruiterMode} />
+        </SectionReveal>
         
-        <BlogSection recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal>
+          <BlogSection recruiterMode={recruiterMode} />
+        </SectionReveal>
         
-        <GitHubInsights stats={profile} projects={repos} recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
         
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-4" : "border-t-4 border-[#2e3440] max-w-5xl mx-auto my-8"} />
+        <SectionReveal>
+          <GitHubInsights stats={profile} projects={repos} recruiterMode={recruiterMode} />
+        </SectionReveal>
         
-        <ContactSection recruiterMode={recruiterMode} />
+        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
+        
+        <SectionReveal>
+          <ContactSection recruiterMode={recruiterMode} />
+        </SectionReveal>
 
       </main>
 
       {/* Footer */}
-      <footer className={`py-8 text-center text-xs tracking-wider border-t
+      <footer className={`py-8 text-center text-xs tracking-wider border-t transition-colors duration-300
         ${recruiterMode 
           ? "bg-zinc-900 border-zinc-800 text-zinc-500 font-sans" 
-          : "bg-[#151821] border-[#ffd700] border-t-4 text-[#94a3b8] font-press text-[7px]"
+          : "bg-[#090d1a]/80 border-cyan-500/10 text-slate-500 font-mono text-[10px]"
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -209,16 +226,20 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-1.5 uppercase">
             Built with 
-            {recruiterMode ? (
-              <Heart className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            ) : (
-              <span className="text-[#ff4757]">&#9829;</span>
-            )}
+            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
             using Next.js + Tailwind CSS
           </div>
         </div>
       </footer>
 
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <ReactorProvider>
+      <DashboardContent />
+    </ReactorProvider>
   );
 }

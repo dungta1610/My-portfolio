@@ -1,8 +1,8 @@
 import React from "react";
 import { GitHubProfileStats, Project } from "../../types/portfolio";
-import { PixelCard } from "../ui/PixelCard";
-import { PixelBadge } from "../ui/PixelBadge";
-import { Star, GitFork, BookOpen, Calendar, ShieldCheck, Activity } from "lucide-react";
+import { DashboardCard } from "../ui/DashboardCard";
+import { DashboardBadge } from "../ui/DashboardBadge";
+import { BookOpen, Calendar, Activity, Terminal } from "lucide-react";
 
 interface GitHubInsightsProps {
   stats: GitHubProfileStats | null;
@@ -28,12 +28,12 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
     .slice(0, 3);
 
   const languageColors: Record<string, string> = {
-    Go: "bg-[#00a8ff] shadow-[0_0_8px_rgba(0,168,255,0.4)]",
-    Golang: "bg-[#00a8ff] shadow-[0_0_8px_rgba(0,168,255,0.4)]",
-    TypeScript: "bg-[#ffd700] shadow-[0_0_8px_rgba(255,215,0,0.4)]",
-    "React/NextJS": "bg-[#2ed573] shadow-[0_0_8px_rgba(46,213,115,0.4)]",
-    JavaScript: "bg-[#8e44ad] shadow-[0_0_8px_rgba(142,68,173,0.4)]",
-    Python: "bg-[#ff4757] shadow-[0_0_8px_rgba(255,71,87,0.4)]",
+    Go: "bg-[#06b6d4] shadow-[0_0_8px_rgba(6,182,212,0.4)]",
+    Golang: "bg-[#06b6d4] shadow-[0_0_8px_rgba(6,182,212,0.4)]",
+    TypeScript: "bg-[#f59e0b] shadow-[0_0_8px_rgba(245,158,11,0.4)]",
+    "React/NextJS": "bg-[#10b981] shadow-[0_0_8px_rgba(16,185,129,0.4)]",
+    JavaScript: "bg-[#8b5cf6] shadow-[0_0_8px_rgba(139,92,246,0.4)]",
+    Python: "bg-[#ef4444] shadow-[0_0_8px_rgba(239,68,68,0.4)]",
   };
 
   const recruiterLangColors: Record<string, string> = {
@@ -45,38 +45,46 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
     Python: "bg-red-500",
   };
 
-  // RPG View
-  const renderRPG = () => {
+  // Dashboard Telemetry View
+  const renderDashboard = () => {
     return (
-      <section id="insights" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#ffd700] mb-8 text-center uppercase tracking-widest select-none pixel-text-shadow">
-          🔮 GUILD INTELLIGENCE (GITHUB INSIGHTS) 🔮
-        </h2>
+      <section id="insights" className="py-16 px-4 max-w-5xl mx-auto scroll-mt-20">
+        <div className="text-center mb-10">
+          <span className="text-cyan-400 font-mono text-xs uppercase tracking-widest block mb-2">
+            [SYS_INFRA] METRICS & DIAGNOSTICS
+          </span>
+          <h2 className="text-3xl font-extrabold text-zinc-100 tracking-tight">
+            Telemetry Analytics
+          </h2>
+          <p className="text-sm text-zinc-400 mt-2 max-w-xl mx-auto font-mono">
+            Automated code profiling metrics from active repositories and compilation servers.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* Top Spell Mastery (Languages) */}
-          <PixelCard variant="slate" className="space-y-4">
-            <h3 className="font-press text-[10px] text-[#00a8ff] uppercase border-b border-[#2e3440] pb-2 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#00a8ff]" /> SPELL MASTERY (TOP LANGUAGES)
+          {/* Top Language Distribution */}
+          <DashboardCard variant="slate" glowing={false} className="space-y-4">
+            <h3 className="font-mono text-xs font-bold text-cyan-400 border-b border-zinc-800/80 pb-2.5 flex items-center gap-2 uppercase tracking-wider">
+              <Activity className="w-4 h-4 text-cyan-400" /> SYSTEM_LANGUAGE_METRICS
             </h3>
             
-            <p className="font-vt text-lg text-zinc-300">
-              Mana allocation and code writing volume calculated across public domains:
+            <p className="text-xs text-zinc-400 font-mono leading-relaxed">
+              Allocation of byte count and module definitions parsed from VCS indexes:
             </p>
 
             <div className="space-y-4 pt-2">
               {topLanguages.map((lang, idx) => {
-                const colorClass = languageColors[lang.language] || "bg-[#4c566a]";
+                const colorClass = languageColors[lang.language] || "bg-zinc-700";
                 return (
                   <div key={idx} className="space-y-1">
-                    <div className="flex justify-between font-press text-[8px]">
-                      <span>{lang.language}</span>
-                      <span className="text-[#00a8ff]">{lang.percentage}%</span>
+                    <div className="flex justify-between font-mono text-[10px]">
+                      <span className="text-zinc-350">{lang.language}</span>
+                      <span className="text-cyan-400">{lang.percentage}%</span>
                     </div>
-                    <div className="h-3 bg-[#0b0c10] border border-[#2e3440] p-0.5 relative">
+                    <div className="h-2 w-full bg-zinc-950/80 border border-zinc-800/60 p-0.5 rounded-sm relative">
                       <div 
-                        className={`h-full ${colorClass}`}
+                        className={`h-full rounded-sm ${colorClass}`}
                         style={{ width: `${lang.percentage}%` }}
                       />
                     </div>
@@ -84,36 +92,36 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
                 );
               })}
             </div>
-          </PixelCard>
+          </DashboardCard>
 
-          {/* Recently Unlocked Dungeons (Recently updated repos) */}
-          <PixelCard variant="slate" className="space-y-4">
-            <h3 className="font-press text-[10px] text-[#2ed573] uppercase border-b border-[#2e3440] pb-2 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[#2ed573]" /> RECENT DUNGEON ACTIVITY
+          {/* Recently updated repositories */}
+          <DashboardCard variant="slate" glowing={false} className="space-y-4">
+            <h3 className="font-mono text-xs font-bold text-violet-400 border-b border-zinc-800/80 pb-2.5 flex items-center gap-2 uppercase tracking-wider">
+              <BookOpen className="w-4 h-4 text-violet-400" /> ACTIVE_VCS_SUBSYSTEMS
             </h3>
 
-            <p className="font-vt text-lg text-zinc-300 mb-2">
-              Recently traversed code regions and completed logs:
+            <p className="text-xs text-zinc-400 font-mono leading-relaxed mb-2">
+              Recently updated source control systems and local packages:
             </p>
 
-            <div className="space-y-3 pt-1">
+            <div className="space-y-3.5 pt-1">
               {recentUpdates.map((repo) => (
-                <div key={repo.id} className="bg-[#0b0c10] p-2.5 border border-[#2e3440] flex justify-between items-center gap-2">
+                <div key={repo.id} className="bg-zinc-950/60 p-3 border border-zinc-800/50 rounded-lg flex justify-between items-center gap-2">
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-press text-[8px] text-[#ffd700] truncate uppercase">
-                      {repo.name}
+                    <h4 className="font-mono text-xs font-bold text-zinc-100 truncate uppercase flex items-center gap-1.5">
+                      <Terminal className="w-3.5 h-3.5 text-cyan-400" /> {repo.name}
                     </h4>
-                    <p className="font-vt text-base text-[#94a3b8] flex items-center gap-1.5 mt-0.5 select-none">
-                      <Calendar className="w-3.5 h-3.5" /> Updated: {new Date(repo.lastUpdated).toLocaleDateString()}
+                    <p className="font-mono text-[9px] text-zinc-500 flex items-center gap-1.5 mt-1 select-none">
+                      <Calendar className="w-3 h-3" /> UPDATED: {new Date(repo.lastUpdated).toLocaleDateString()}
                     </p>
                   </div>
-                  <PixelBadge variant={repo.featured ? "gold" : "slate"}>
-                    {repo.primaryLanguage || "None"}
-                  </PixelBadge>
+                  <DashboardBadge variant={repo.featured ? "gold" : "slate"}>
+                    {repo.primaryLanguage || "Repo"}
+                  </DashboardBadge>
                 </div>
               ))}
             </div>
-          </PixelCard>
+          </DashboardCard>
 
         </div>
       </section>
@@ -123,7 +131,7 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
   // Recruiter View
   const renderRecruiter = () => {
     return (
-      <section id="insights" className="py-12 px-6 max-w-5xl mx-auto scroll-mt-20">
+      <section id="insights" className="py-16 px-6 max-w-5xl mx-auto scroll-mt-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
           {/* Languages */}
@@ -178,5 +186,5 @@ export const GitHubInsights: React.FC<GitHubInsightsProps> = ({
     );
   };
 
-  return recruiterMode ? renderRecruiter() : renderRPG();
+  return recruiterMode ? renderRecruiter() : renderDashboard();
 };

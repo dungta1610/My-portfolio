@@ -1,12 +1,81 @@
 import React, { useState } from "react";
 import { SAVED_RESOURCES } from "../../data/resources";
-import { PixelCard } from "../ui/PixelCard";
-import { PixelBadge } from "../ui/PixelBadge";
-import { BookOpen, Globe, Code, Box, PlayCircle, ExternalLink, Hash, Database } from "lucide-react";
+import { DashboardCard } from "../ui/DashboardCard";
+import { DashboardBadge } from "../ui/DashboardBadge";
+import { DashboardButton } from "../ui/DashboardButton";
+import { BookOpen, Globe, Code, Box, PlayCircle, ExternalLink, Database } from "lucide-react";
+import { SavedResource } from "../../types/portfolio";
 
 interface ResourcesProps {
   recruiterMode: boolean;
 }
+
+const ResourceCard: React.FC<{
+  item: SavedResource;
+  typeColors: Record<SavedResource['type'], "blue" | "emerald" | "purple" | "slate" | "red" | "gold" | "cyan" | "violet">;
+  typeIcons: Record<SavedResource['type'], React.ComponentType<any>>;
+}> = ({ item, typeColors, typeIcons }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const Icon = typeIcons[item.type];
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="h-full"
+    >
+      <DashboardCard 
+        variant={typeColors[item.type]} 
+        glowing={isHovered}
+        className={`flex flex-col justify-between h-full relative overflow-hidden transition-all duration-300 ${
+          isHovered ? "-translate-y-1.5" : ""
+        }`}
+      >
+        <div className="z-10">
+          <div className="flex justify-between items-start gap-2 border-b border-zinc-800/80 pb-2.5 mb-3">
+            <div className="flex items-center gap-2">
+              <div className={`w-8 h-8 bg-zinc-950 border flex items-center justify-center text-cyan-400 rounded transition-transform duration-300
+                ${isHovered ? "border-cyan-400 scale-105 rotate-3" : "border-zinc-800"}`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <h3 className="font-mono text-xs font-semibold text-zinc-100 uppercase tracking-wide leading-relaxed line-clamp-1">
+                {item.title}
+              </h3>
+            </div>
+            <DashboardBadge variant={typeColors[item.type]}>{item.type}</DashboardBadge>
+          </div>
+
+          <p className="text-xs text-zinc-400 mb-4 leading-relaxed font-sans">
+            {item.note}
+          </p>
+        </div>
+
+        <div className="z-10">
+          {/* Tag List */}
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            {item.tags.map((tag) => (
+              <span key={tag} className="font-mono text-[9px] text-cyan-400/80 bg-cyan-950/20 border border-cyan-800/20 rounded px-1.5 py-0.5">
+                #{tag}
+              </span>
+            ))}
+          </div>
+
+          <div className="pt-2.5 border-t border-zinc-800/80 flex justify-between items-center">
+            <span className="font-mono text-[9px] text-zinc-500">SAVED: {item.savedDate}</span>
+            <a 
+              href={item.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-mono text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
+            >
+              ACCESS NODE <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </div>
+      </DashboardCard>
+    </div>
+  );
+};
 
 export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
   const [selectedTag, setSelectedTag] = useState<string>("All");
@@ -28,7 +97,7 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
   };
 
   const typeColors = {
-    repo: "blue" as const,
+    repo: "cyan" as const,
     blog: "emerald" as const,
     article: "purple" as const,
     tool: "slate" as const,
@@ -36,88 +105,45 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
     course: "gold" as const,
   };
 
-  // RPG Resource Render
-  const renderRPG = () => {
+  // Dashboard Resource Render
+  const renderDashboard = () => {
     return (
-      <section id="resources" className="py-12 px-4 max-w-5xl mx-auto scroll-mt-20">
-        <h2 className="font-press text-sm text-[#ffd700] mb-4 text-center uppercase tracking-widest select-none pixel-text-shadow">
-          🐉 DRAGON EGG VAULT (RESOURCES) 🐉
-        </h2>
-        <p className="font-vt text-lg text-[#94a3b8] mb-8 text-center select-none">
-          Bookmarks and scrolls saved on my development journey
-        </p>
+      <section id="resources" className="py-16 px-4 max-w-5xl mx-auto scroll-mt-20">
+        <div className="text-center mb-10">
+          <span className="text-cyan-400 font-mono text-xs uppercase tracking-widest block mb-2">
+            [SYS_DB] RESOURCE VAULT
+          </span>
+          <h2 className="text-3xl font-extrabold text-zinc-100 tracking-tight">
+            Knowledge Resource Vault
+          </h2>
+          <p className="text-sm text-zinc-400 mt-2 max-w-xl mx-auto font-mono">
+            Sleek bookmark database containing architectural digests, engineering guides, and learning resources.
+          </p>
+        </div>
 
         {/* Tag Filters */}
-        <div className="flex flex-wrap justify-center gap-1.5 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
           {allTags.map((tag) => {
             const active = selectedTag === tag;
             return (
-              <button
+              <DashboardButton
                 key={tag}
+                variant={active ? "cyan" : "slate"}
+                recruiterMode={recruiterMode}
                 onClick={() => setSelectedTag(tag)}
-                className={`px-2 py-1 border-2 text-[8px] font-press uppercase select-none cursor-pointer
-                  ${active 
-                    ? "bg-[#ffd700] text-black border-[#ffd700]" 
-                    : "bg-[#151821] text-[#ededed] border-[#4c566a] hover:bg-[#1e2230]"
-                  }
-                  shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]
-                `}
+                className="font-mono text-[10px] cursor-pointer"
               >
                 {tag}
-              </button>
+              </DashboardButton>
             );
           })}
         </div>
 
         {/* Grid List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredResources.map((item, idx) => {
-            const Icon = typeIcons[item.type];
-            return (
-              <PixelCard key={idx} variant={typeColors[item.type]} className="flex flex-col justify-between group">
-                <div>
-                  <div className="flex justify-between items-start gap-2 border-b border-[#2e3440] pb-2 mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-[#0b0c10] border border-[#ffd700] flex items-center justify-center text-[#ffd700] shadow-sm select-none">
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <h3 className="font-press text-[9px] text-[#ededed] uppercase leading-relaxed line-clamp-1">
-                        {item.title}
-                      </h3>
-                    </div>
-                    <PixelBadge variant={typeColors[item.type]}>{item.type}</PixelBadge>
-                  </div>
-
-                  <p className="font-vt text-base text-zinc-400 mb-4 leading-relaxed">
-                    {item.note}
-                  </p>
-                </div>
-
-                <div>
-                  {/* Tag List */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {item.tags.map((tag) => (
-                      <span key={tag} className="font-vt text-xs text-[#ffd700] bg-[#0b0c10] border border-[#2e3440] px-1.5 py-0.5">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="pt-2 border-t border-[#2e3440] flex justify-between items-center">
-                    <span className="font-vt text-xs text-[#94a3b8]">Saved: {item.savedDate}</span>
-                    <a 
-                      href={item.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="font-press text-[7px] text-[#ffd700] hover:text-[#ffea7f] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
-                    >
-                      CLAIM ITEM <ExternalLink className="w-2.5 h-2.5" />
-                    </a>
-                  </div>
-                </div>
-              </PixelCard>
-            );
-          })}
+          {filteredResources.map((item, idx) => (
+            <ResourceCard key={idx} item={item} typeColors={typeColors} typeIcons={typeIcons} />
+          ))}
         </div>
       </section>
     );
@@ -126,7 +152,7 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
   // Recruiter View
   const renderRecruiter = () => {
     return (
-      <section id="resources" className="py-12 px-6 max-w-5xl mx-auto scroll-mt-20">
+      <section id="resources" className="py-16 px-6 max-w-5xl mx-auto scroll-mt-20">
         <div className="mb-8">
           <span className="text-amber-500 text-xs font-semibold uppercase tracking-widest block mb-1">
             Resource Curation
@@ -202,5 +228,5 @@ export const Resources: React.FC<ResourcesProps> = ({ recruiterMode }) => {
     );
   };
 
-  return recruiterMode ? renderRecruiter() : renderRPG();
+  return recruiterMode ? renderRecruiter() : renderDashboard();
 };

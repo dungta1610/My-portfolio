@@ -1,30 +1,159 @@
 import React, { useState } from "react";
 import { Project } from "../../types/portfolio";
-import { PixelCard } from "../ui/PixelCard";
-import { PixelBadge } from "../ui/PixelBadge";
-import { PixelButton } from "../ui/PixelButton";
-import { ProjectModal } from "../ui/ProjectModal";
-import { Star, GitFork, AlertTriangle, Play, HelpCircle, FileCheck, Layers, Cpu, ShieldAlert, Award } from "lucide-react";
+import { DashboardCard } from "../ui/DashboardCard";
+import { DashboardBadge } from "../ui/DashboardBadge";
+import { DashboardButton } from "../ui/DashboardButton";
+import { MissionInspection } from "../projects/MissionInspection";
+import { Star, Terminal, Layers } from "lucide-react";
 
 interface ProjectsSectionProps {
   projects: Project[];
   recruiterMode: boolean;
+  onHoverProjectChange?: (projectId: string | null) => void;
 }
 
 type FilterType = "Featured" | "Fullstack" | "Backend" | "Frontend" | "Cloud" | "Algorithms" | "Experiments";
 
-export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recruiterMode }) => {
+// Sub-component for Dashboard project card
+const DashboardProjectCard: React.FC<{
+  project: Project;
+  onClick: () => void;
+  onHover?: (id: string | null) => void;
+}> = ({ project, onClick, onHover }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const difficultyColors = {
+    Easy: "emerald",
+    Medium: "blue",
+    Hard: "gold",
+    Expert: "red"
+  } as const;
+
+  const statusColors = {
+    Completed: "emerald",
+    "In Development": "blue",
+    Prototype: "gold",
+    Archived: "slate",
+    Unknown: "slate"
+  } as const;
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (onHover) onHover(project.id);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (onHover) onHover(null);
+  };
+
+  const handleFocus = () => {
+    setIsHovered(true);
+    if (onHover) onHover(project.id);
+  };
+
+  const handleBlur = () => {
+    setIsHovered(false);
+    if (onHover) onHover(null);
+  };
+
+  return (
+    <div
+      id={`project-card-${project.id}`}
+      data-project-id={project.id}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      tabIndex={0}
+      className="h-full focus:outline-none"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
+      <DashboardCard
+        variant={project.featured ? "gold" : "slate"}
+        glowing={project.featured || isHovered}
+        onClick={onClick}
+        className={`flex flex-col h-full group transition-all duration-300 relative overflow-hidden ${
+          isHovered ? "-translate-y-1.5" : ""
+        }`}
+      >
+
+        <div className="flex justify-between items-start gap-2 border-b border-slate-800 pb-3 mb-4 z-20">
+          <div className="flex flex-col gap-1">
+            <span className="font-mono text-[9px] text-slate-500 select-none tracking-wider">
+              {project.featured ? "SYS // CRITICAL MISSION" : "SYS // AUXILIARY"}
+            </span>
+            <h3 className="font-mono text-xs text-slate-100 font-bold uppercase tracking-wider group-hover:text-cyan-400 transition-colors">
+              {project.name}
+            </h3>
+          </div>
+          <div className="flex flex-col items-end gap-1.5 shrink-0">
+            <DashboardBadge variant={difficultyColors[project.difficulty]}>
+              {project.difficulty}
+            </DashboardBadge>
+            <DashboardBadge variant={statusColors[project.status]}>
+              {project.status}
+            </DashboardBadge>
+          </div>
+        </div>
+
+        <p className="text-xs leading-relaxed text-slate-300 flex-1 mb-4 line-clamp-3 z-20">
+          {project.description}
+        </p>
+
+        {/* Quest Info */}
+        <div className="bg-[#05070d]/90 p-3 border border-slate-800/80 rounded-lg mb-4 space-y-1 font-mono text-[10px] text-slate-400 z-20">
+          <div>
+            <span className="text-cyan-500 font-bold">ROLE:</span> <span className="text-slate-200">{project.role}</span>
+          </div>
+          {project.stars > 0 && (
+            <div className="flex items-center gap-1.5 text-slate-200">
+              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10" /> {project.stars} Stars
+            </div>
+          )}
+        </div>
+
+        {/* Tech Badges */}
+        <div className="flex flex-wrap gap-1 mb-4 z-20">
+          {project.techStack.slice(0, 3).map((tech) => (
+            <span key={tech} className="bg-[#0b132b] border border-cyan-500/10 rounded px-2 py-0.5 font-mono text-[10px] text-cyan-400">
+              {tech}
+            </span>
+          ))}
+          {project.techStack.length > 3 && (
+            <span className="text-slate-500 font-mono text-[10px] self-center ml-1">
+              +{project.techStack.length - 3} more
+            </span>
+          )}
+        </div>
+
+        <div className="flex pt-3 border-t border-slate-800 text-right z-20">
+          <span className="w-full font-mono text-[10px] text-cyan-400 font-bold tracking-wider flex items-center justify-end gap-1 group-hover:translate-x-1 transition-transform select-none">
+            OPEN CASE STUDY //
+          </span>
+        </div>
+      </DashboardCard>
+    </div>
+  );
+};
+
+export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recruiterMode, onHoverProjectChange }) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("Featured");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const filters: { label: string; value: FilterType }[] = [
-    { label: "⭐ Featured", value: "Featured" },
-    { label: "⚙️ Backend", value: "Backend" },
-    { label: "🖥️ Frontend", value: "Frontend" },
-    { label: "🌐 Full-Stack", value: "Fullstack" },
-    { label: "☁️ Cloud / DevOps", value: "Cloud" },
-    { label: "🏆 Algorithms", value: "Algorithms" },
-    { label: "🧪 Experiments", value: "Experiments" },
+    { label: "Featured", value: "Featured" },
+    { label: "Backend", value: "Backend" },
+    { label: "Frontend", value: "Frontend" },
+    { label: "Full-Stack", value: "Fullstack" },
+    { label: "Cloud / DevOps", value: "Cloud" },
+    { label: "Algorithms", value: "Algorithms" },
+    { label: "Experiments", value: "Experiments" },
   ];
 
   const filteredProjects = projects.filter((project) => {
@@ -54,96 +183,24 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
     return true;
   });
 
-  const difficultyColors = {
-    Easy: "emerald",
-    Medium: "blue",
-    Hard: "gold",
-    Expert: "red"
-  } as const;
-
-  const statusColors = {
-    Completed: "emerald",
-    "In Development": "blue",
-    Prototype: "gold",
-    Archived: "slate",
-    Unknown: "slate"
-  } as const;
-
-  // RPG Card render
-  const renderRPGCard = (project: Project) => {
-    return (
-      <PixelCard
-        key={project.id}
-        variant={project.featured ? "gold" : "slate"}
-        glowing={project.featured}
-        onClick={() => setSelectedProject(project)}
-        className="flex flex-col h-full group"
-      >
-        <div className="flex justify-between items-start gap-2 border-b border-[#2e3440] pb-2 mb-3">
-          <div className="flex flex-col gap-1">
-            <span className="font-press text-[8px] text-[#94a3b8] select-none">
-              {project.featured ? "🛡️ MAIN QUEST" : "⚔️ SIDE QUEST"}
-            </span>
-            <h3 className="font-press text-[10px] text-[#ededed] leading-relaxed uppercase group-hover:text-[#ffd700] transition-colors">
-              {project.name}
-            </h3>
-          </div>
-          <div className="flex flex-col items-end gap-1.5">
-            <PixelBadge variant={difficultyColors[project.difficulty]}>
-              {project.difficulty}
-            </PixelBadge>
-            <PixelBadge variant={statusColors[project.status]}>
-              {project.status}
-            </PixelBadge>
-          </div>
-        </div>
-
-        <p className="font-vt text-base leading-snug text-zinc-200 flex-1 mb-4 line-clamp-3">
-          {project.description}
-        </p>
-
-        {/* Quest Info */}
-        <div className="bg-[#0b0c10] p-2 border border-[#2e3440] mb-4 space-y-1 font-vt text-sm text-[#94a3b8]">
-          <div>
-            <span className="text-[#ffd700]">ROLE:</span> <span className="text-zinc-200">{project.role}</span>
-          </div>
-          {project.stars > 0 && (
-            <div className="flex items-center gap-1.5 text-zinc-200">
-              <Star className="w-3.5 h-3.5 text-[#ffd700]" /> {project.stars} Stars
-            </div>
-          )}
-        </div>
-
-        {/* Tech Badges */}
-        <div className="flex flex-wrap gap-1 mb-3">
-          {project.techStack.slice(0, 3).map((tech) => (
-            <span key={tech} className="bg-[#1e2230] border border-[#2e3440] px-1.5 py-0.5 font-vt text-xs text-[#00a8ff]">
-              {tech}
-            </span>
-          ))}
-          {project.techStack.length > 3 && (
-            <span className="text-[#94a3b8] font-vt text-xs self-center ml-1">
-              +{project.techStack.length - 3} more
-            </span>
-          )}
-        </div>
-
-        <div className="flex pt-2 border-t border-[#2e3440] text-right">
-          <span className="w-full font-press text-[7px] text-[#ffd700] flex items-center justify-end gap-1 group-hover:translate-x-1 transition-transform">
-            OPEN JOURNAL &raquo;
-          </span>
-        </div>
-      </PixelCard>
-    );
-  };
-
   // Recruiter Card render
   const renderRecruiterCard = (project: Project) => {
     return (
-      <div 
+      <div
         key={project.id}
+        tabIndex={0}
         onClick={() => setSelectedProject(project)}
-        className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-amber-500/50 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col h-full group"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setSelectedProject(project);
+          }
+        }}
+        onMouseEnter={() => onHoverProjectChange?.(project.id)}
+        onMouseLeave={() => onHoverProjectChange?.(null)}
+        onFocus={() => onHoverProjectChange?.(project.id)}
+        onBlur={() => onHoverProjectChange?.(null)}
+        className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-amber-500/50 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col h-full group focus:outline-none focus:border-amber-500/50"
       >
         <div className="flex justify-between items-start gap-4 mb-3">
           <div>
@@ -191,7 +248,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
     <section id="projects" className="py-12 px-4 max-w-6xl mx-auto scroll-mt-20">
       
       {/* Title */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 select-none">
         {recruiterMode ? (
           <>
             <span className="text-amber-500 text-xs font-semibold uppercase tracking-widest block mb-1">
@@ -201,18 +258,21 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
           </>
         ) : (
           <>
-            <h2 className="font-press text-sm text-[#ffd700] uppercase tracking-widest select-none pixel-text-shadow">
-              🗺️ DUNGEON MAP (PROJECTS) 🗺️
-            </h2>
-            <p className="font-vt text-lg text-[#94a3b8] mt-2 select-none">
-              Select a dungeon chamber to read its Quest Journal (Mini Case Study)
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Layers className="w-5 h-5 text-cyan-400 text-glow-cyan animate-pulse" />
+              <h2 className="font-mono text-sm text-cyan-400 text-glow-cyan uppercase tracking-widest text-center">
+                // ACTIVE MISSION DIRECTORY
+              </h2>
+            </div>
+            <p className="font-mono text-xs text-slate-500 mt-2">
+              Select an operational chamber to examine its Case Study dossier
             </p>
           </>
         )}
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-3xl mx-auto">
+      <div className="flex flex-wrap justify-center gap-3 mb-8 max-w-3xl mx-auto">
         {filters.map((filter) => {
           const active = activeFilter === filter.value;
           if (recruiterMode) {
@@ -226,24 +286,19 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
                     : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
                   }`}
               >
-                {filter.label.split(" ").slice(1).join(" ") || filter.label}
+                {filter.label}
               </button>
             );
           } else {
             return (
-              <button
+              <DashboardButton
                 key={filter.value}
+                variant={active ? "blue" : "slate"}
                 onClick={() => setActiveFilter(filter.value)}
-                className={`px-2.5 py-1.5 border-2 text-[8px] font-press uppercase select-none transition-all duration-75 cursor-pointer
-                  ${active 
-                    ? "bg-[#ffd700] text-black border-[#ffd700]" 
-                    : "bg-[#151821] text-[#ededed] border-[#94a3b8] hover:bg-[#1e2230] hover:border-[#ffd700]"
-                  }
-                  shadow-[0_-2px_0_-1px_#0b0c10,0_2px_0_-1px_#0b0c10,-2px_0_0_-1px_#0b0c10,2px_0_0_-1px_#0b0c10]
-                `}
+                className="py-1 px-3"
               >
                 {filter.label}
-              </button>
+              </DashboardButton>
             );
           }
         })}
@@ -253,7 +308,16 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
       {filteredProjects.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project) => 
-            recruiterMode ? renderRecruiterCard(project) : renderRPGCard(project)
+            recruiterMode ? (
+              renderRecruiterCard(project)
+            ) : (
+              <DashboardProjectCard 
+                key={project.id} 
+                project={project} 
+                onClick={() => setSelectedProject(project)} 
+                onHover={onHoverProjectChange}
+              />
+            )
           )}
         </div>
       ) : (
@@ -261,16 +325,16 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, recr
           {recruiterMode ? (
             <p className="text-zinc-500 text-sm">No projects found matching the active filter.</p>
           ) : (
-            <div className="inline-block p-4 border-2 border-dashed border-[#ffd700] font-vt text-lg text-[#94a3b8] select-none">
-              🔒 DUNGEON IS LOCKED (No matching projects found)
+            <div className="inline-block p-4 border border-dashed border-cyan-500/25 rounded-lg font-mono text-xs text-slate-500 select-none">
+              [SYSTEM_LOCK // NO MATCHING DATA SIGNALS DETECTED]
             </div>
           )}
         </div>
       )}
 
-      {/* Modal */}
+      {/* Slide-over Inspector */}
       {selectedProject && (
-        <ProjectModal
+        <MissionInspection
           project={selectedProject}
           isOpen={true}
           onClose={() => setSelectedProject(null)}
