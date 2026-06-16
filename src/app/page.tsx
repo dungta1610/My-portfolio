@@ -9,8 +9,6 @@ import { ResumeSection } from "../components/sections/ResumeSection";
 import { ProjectsSection } from "../components/sections/ProjectsSection";
 import { SkillSection } from "../components/sections/SkillSection";
 import { Achievements } from "../components/sections/Achievements";
-import { Resources } from "../components/sections/Resources";
-import { BlogSection } from "../components/sections/BlogSection";
 import { GitHubInsights } from "../components/sections/GitHubInsights";
 import { ContactSection } from "../components/sections/ContactSection";
 import { GitHubProfileStats, Project } from "../types/portfolio";
@@ -19,6 +17,7 @@ import { DashboardButton } from "../components/ui/DashboardButton";
 import { RefreshCw, Heart } from "lucide-react";
 import { SectionReveal } from "../components/effects/SectionReveal";
 import { LivingArchitectureBackground } from "../components/effects/LivingArchitectureBackground";
+import { SafeEffect } from "../components/effects/SafeEffect";
 import { ReactorProvider, useReactorState } from "../context/ReactorContext";
 
 function DashboardContent() {
@@ -47,9 +46,9 @@ function DashboardContent() {
       const data = await res.json();
       setProfile(data.profile);
       setRepos(data.repos);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || "An unexpected error occurred.");
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
@@ -61,7 +60,7 @@ function DashboardContent() {
 
   // Intersection Observer to highlight active navigation tab during scroll
   useEffect(() => {
-    const sections = ["hero", "resume", "projects", "skills", "achievements", "resources", "blog", "contact"];
+    const sections = ["hero", "resume", "projects", "skills", "achievements", "contact"];
     const observers = sections.map((id) => {
       const el = document.getElementById(id);
       if (!el) return null;
@@ -72,7 +71,10 @@ function DashboardContent() {
             setActiveSection(id);
           }
         },
-        { threshold: 0.25, rootMargin: "-72px 0px -20%" }
+        // Track the section occupying the middle band of the viewport. Low
+        // threshold + a rootMargin that shrinks the active band keeps short
+        // sections (common on mobile) from never crossing the trigger.
+        { threshold: [0, 0.1, 0.25], rootMargin: "-72px 0px -45%" }
       );
       observer.observe(el);
       return { observer, el };
@@ -130,7 +132,9 @@ function DashboardContent() {
 
   return (
     <div className={`min-h-screen flex flex-col relative ${recruiterMode ? "bg-zinc-950 font-sans" : "bg-[#05070d]"}`}>
-      <LivingArchitectureBackground />
+      <SafeEffect>
+        <LivingArchitectureBackground />
+      </SafeEffect>
       
       {/* Navigation Header */}
       <DashboardHeader 
@@ -185,18 +189,6 @@ function DashboardContent() {
         
         <SectionReveal>
           <Achievements recruiterMode={recruiterMode} />
-        </SectionReveal>
-        
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
-        
-        <SectionReveal>
-          <Resources recruiterMode={recruiterMode} />
-        </SectionReveal>
-        
-        <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />
-        
-        <SectionReveal>
-          <BlogSection recruiterMode={recruiterMode} />
         </SectionReveal>
         
         <hr className={recruiterMode ? "border-zinc-900 max-w-5xl mx-auto my-6" : "border-zinc-800/40 max-w-5xl mx-auto my-12"} />

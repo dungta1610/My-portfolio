@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { X, ExternalLink, ShieldCheck, Trophy, Terminal, AlertTriangle, Star, Cpu, Server } from "lucide-react";
 import { Github } from "../ui/Icons";
 import { Project } from "../../types/portfolio";
@@ -53,20 +54,20 @@ const TopologyDiagram: React.FC<{ projectId: string }> = ({ projectId }) => {
 
     if (pId === "stockflow") {
       nodes = [
-        { id: "client", label: "CLIENT_UI", x: 0.1, y: 0.5, type: "entry" },
-        { id: "gateway", label: "GO_API_GATEWAY", x: 0.32, y: 0.5, type: "compute" },
-        { id: "queue", label: "RABBITMQ_BUS", x: 0.55, y: 0.25, type: "network" },
-        { id: "worker", label: "CONSUMER_ENGINE", x: 0.55, y: 0.75, type: "compute" },
-        { id: "postgres", label: "POSTGRESQL", x: 0.78, y: 0.5, type: "storage" },
-        { id: "redis", label: "REDIS_CACHE", x: 0.92, y: 0.5, type: "storage" },
+        { id: "client", label: "CLIENT_APP", x: 0.1, y: 0.5, type: "entry" },
+        { id: "gin_api", label: "GIN_HTTP_API", x: 0.35, y: 0.5, type: "compute" },
+        { id: "redis_limiter", label: "REDIS_LIMITER", x: 0.6, y: 0.28, type: "network" },
+        { id: "modules_core", label: "MODULES_CORE", x: 0.6, y: 0.72, type: "compute" },
+        { id: "postgres", label: "POSTGRESQL_DB", x: 0.88, y: 0.72, type: "storage" },
+        { id: "redis", label: "REDIS_CACHE", x: 0.88, y: 0.28, type: "storage" },
       ];
       edges = [
-        { from: "client", to: "gateway" },
-        { from: "gateway", to: "queue" },
-        { from: "gateway", to: "worker" },
-        { from: "queue", to: "worker" },
-        { from: "worker", to: "postgres" },
-        { from: "postgres", to: "redis" },
+        { from: "client", to: "gin_api" },
+        { from: "gin_api", to: "redis_limiter" },
+        { from: "gin_api", to: "modules_core" },
+        { from: "redis_limiter", to: "modules_core" },
+        { from: "modules_core", to: "postgres" },
+        { from: "modules_core", to: "redis" },
       ];
     } else if (pId === "pocketatlas") {
       nodes = [
@@ -85,45 +86,48 @@ const TopologyDiagram: React.FC<{ projectId: string }> = ({ projectId }) => {
       ];
     } else if (pId === "token-transfer-monitor") {
       nodes = [
-        { id: "eth", label: "ETH_MAINNET", x: 0.12, y: 0.5, type: "entry" },
-        { id: "rpc", label: "RPC_NODE_CLIENT", x: 0.35, y: 0.5, type: "network" },
-        { id: "parser", label: "PARSER_SERVICE", x: 0.58, y: 0.5, type: "compute" },
-        { id: "sqlite", label: "SQLITE_STORE", x: 0.82, y: 0.28, type: "storage" },
-        { id: "ws", label: "WEBSOCKETS_PUSH", x: 0.82, y: 0.72, type: "network" },
+        { id: "evm_rpc", label: "EVM_WEBSOCKET_RPC", x: 0.1, y: 0.5, type: "entry" },
+        { id: "listener", label: "BLOCKCHAIN_LISTENER", x: 0.32, y: 0.5, type: "compute" },
+        { id: "rabbitmq", label: "RABBITMQ_EXCHANGE", x: 0.55, y: 0.5, type: "network" },
+        { id: "worker", label: "TRANSFER_WORKER", x: 0.78, y: 0.5, type: "compute" },
+        { id: "postgres", label: "POSTGRESQL_DB", x: 0.95, y: 0.72, type: "storage" },
+        { id: "dlq", label: "RETRY_DLQ_QUEUE", x: 0.95, y: 0.28, type: "network" },
       ];
       edges = [
-        { from: "eth", to: "rpc" },
-        { from: "rpc", to: "parser" },
-        { from: "parser", to: "sqlite" },
-        { from: "parser", to: "ws" },
+        { from: "evm_rpc", to: "listener" },
+        { from: "listener", to: "rabbitmq" },
+        { from: "rabbitmq", to: "worker" },
+        { from: "worker", to: "postgres" },
+        { from: "worker", to: "dlq" },
       ];
     } else if (pId === "simple-banking-system") {
       nodes = [
-        { id: "cli", label: "CLI_INTERACTION", x: 0.15, y: 0.5, type: "entry" },
-        { id: "auth", label: "AUTH_CONTROLLER", x: 0.45, y: 0.28, type: "compute" },
-        { id: "ledger", label: "LEDGER_CORE", x: 0.45, y: 0.72, type: "compute" },
-        { id: "sqlite", label: "SQLITE_DB", x: 0.8, y: 0.5, type: "storage" },
+        { id: "client", label: "HTTP_CLIENT", x: 0.12, y: 0.5, type: "entry" },
+        { id: "gin_transport", label: "GIN_TRANSPORT", x: 0.35, y: 0.5, type: "compute" },
+        { id: "redis_limiter", label: "REDIS_LIMITER", x: 0.6, y: 0.28, type: "network" },
+        { id: "banking_biz", label: "CORE_BANKING_BIZ", x: 0.6, y: 0.72, type: "compute" },
+        { id: "postgres", label: "POSTGRESQL_ACID", x: 0.88, y: 0.5, type: "storage" },
       ];
       edges = [
-        { from: "cli", to: "auth" },
-        { from: "cli", to: "ledger" },
-        { from: "auth", to: "sqlite" },
-        { from: "ledger", to: "sqlite" },
+        { from: "client", to: "gin_transport" },
+        { from: "gin_transport", to: "redis_limiter" },
+        { from: "gin_transport", to: "banking_biz" },
+        { from: "redis_limiter", to: "banking_biz" },
+        { from: "banking_biz", to: "postgres" },
       ];
     } else if (pId === "logiquote") {
       nodes = [
-        { id: "client", label: "CLIENT_DASHBOARD", x: 0.12, y: 0.5, type: "entry" },
-        { id: "router", label: "NEXT_ROUTER", x: 0.38, y: 0.5, type: "compute" },
-        { id: "auth", label: "NEXTAUTH_SECURE", x: 0.62, y: 0.28, type: "network" },
-        { id: "pricing", label: "PRICING_ENGINE", x: 0.62, y: 0.72, type: "compute" },
-        { id: "supabase", label: "SUPABASE_POSTGRES", x: 0.85, y: 0.5, type: "storage" },
+        { id: "client", label: "REACT_FRONTEND", x: 0.12, y: 0.5, type: "entry" },
+        { id: "go_api", label: "GO_REST_API", x: 0.38, y: 0.5, type: "compute" },
+        { id: "in_memory_queue", label: "IN_MEMORY_QUEUE", x: 0.65, y: 0.28, type: "network" },
+        { id: "background_worker", label: "BACKGROUND_WORKER", x: 0.88, y: 0.28, type: "compute" },
+        { id: "in_memory_store", label: "IN_MEMORY_STORE", x: 0.65, y: 0.72, type: "storage" },
       ];
       edges = [
-        { from: "client", to: "router" },
-        { from: "router", to: "auth" },
-        { from: "router", to: "pricing" },
-        { from: "auth", to: "supabase" },
-        { from: "pricing", to: "supabase" },
+        { from: "client", to: "go_api" },
+        { from: "go_api", to: "in_memory_store" },
+        { from: "go_api", to: "in_memory_queue" },
+        { from: "in_memory_queue", to: "background_worker" },
       ];
     } else {
       nodes = [
@@ -277,6 +281,11 @@ export const MissionInspection: React.FC<MissionInspectionProps> = ({
   const { setInspectingProject } = useReactorState();
   const [bootstrapLogs, setBootstrapLogs] = useState<string[]>([]);
   const [isBootstrapped, setIsBootstrapped] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sync active inspecting project with the ReactorContext
   useEffect(() => {
@@ -314,17 +323,110 @@ export const MissionInspection: React.FC<MissionInspectionProps> = ({
     }
   }, [isOpen, project]);
 
+  const startXRef = useRef<number>(0);
+  const startYRef = useRef<number>(0);
+
   // Prevent body scrolling when inspector is open
   useEffect(() => {
     if (isOpen) {
-      document.body.classList.add("no-scroll");
+      // Calculate scrollbar width to prevent layout shift
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      // Save styles to restore later
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalBodyPaddingRight = document.body.style.paddingRight;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+
+      // Apply locking styles
+      document.body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+      document.documentElement.style.overflow = "hidden";
+
+      const handleTouchStart = (e: TouchEvent) => {
+        if (e.touches.length > 0) {
+          startXRef.current = e.touches[0].clientX;
+          startYRef.current = e.touches[0].clientY;
+        }
+      };
+
+      const preventScroll = (e: TouchEvent | WheelEvent) => {
+        const target = e.target as Node | null;
+        if (!target) return;
+
+        // Safely get element if target is a text node
+        const element = target.nodeType === Node.TEXT_NODE ? target.parentElement : (target as HTMLElement);
+        if (!element || !(element instanceof Element)) {
+          e.preventDefault();
+          return;
+        }
+
+        const scrollContainer = element.closest(".inspect-scroll-container") as HTMLElement | null;
+
+        if (!scrollContainer) {
+          e.preventDefault();
+          return;
+        }
+
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+        const maxScroll = scrollHeight - clientHeight;
+
+        if (maxScroll <= 0) {
+          e.preventDefault();
+          return;
+        }
+
+        if (e instanceof WheelEvent) {
+          const deltaX = e.deltaX;
+          const deltaY = e.deltaY;
+
+          // If the scroll is primarily horizontal (e.g. horizontal tab bar), do not prevent it
+          if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            return;
+          }
+
+          if (deltaY < 0 && scrollTop <= 0) {
+            e.preventDefault();
+          } else if (deltaY > 0 && scrollTop >= maxScroll - 1) {
+            e.preventDefault();
+          }
+        } else if (e instanceof TouchEvent && e.touches.length > 0) {
+          const currentX = e.touches[0].clientX;
+          const currentY = e.touches[0].clientY;
+          const deltaX = startXRef.current - currentX;
+          const deltaY = startYRef.current - currentY; // positive = scroll down, negative = scroll up
+
+          // If the touch swipe is primarily horizontal, do not prevent it
+          if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            return;
+          }
+
+          if (deltaY < 0 && scrollTop <= 0) {
+            e.preventDefault();
+          } else if (deltaY > 0 && scrollTop >= maxScroll - 1) {
+            e.preventDefault();
+          }
+        }
+      };
+
+      window.addEventListener("touchstart", handleTouchStart, { passive: true });
+      window.addEventListener("wheel", preventScroll, { passive: false });
+      window.addEventListener("touchmove", preventScroll, { passive: false });
+
       setActiveTab("overview");
-    } else {
-      document.body.classList.remove("no-scroll");
+
+      return () => {
+        // Restore styles
+        document.body.style.overflow = originalBodyOverflow;
+        document.body.style.paddingRight = originalBodyPaddingRight;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+
+        window.removeEventListener("touchstart", handleTouchStart);
+        window.removeEventListener("wheel", preventScroll);
+        window.removeEventListener("touchmove", preventScroll);
+      };
     }
-    return () => {
-      document.body.classList.remove("no-scroll");
-    };
   }, [isOpen, project]);
 
   // Escape key handler
@@ -337,6 +439,7 @@ export const MissionInspection: React.FC<MissionInspectionProps> = ({
   }, [onClose]);
 
   if (!isOpen) return null;
+  if (!mounted) return null;
 
   const difficultyColors = {
     Easy: "emerald",
@@ -367,14 +470,14 @@ export const MissionInspection: React.FC<MissionInspectionProps> = ({
     Expert: "bg-red-500"
   }[project.difficulty] || "bg-slate-500";
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-50 flex justify-end bg-black/75 backdrop-blur-xs select-none"
+      className="fixed inset-0 z-[9999] flex justify-end bg-black/75 backdrop-blur-xs select-none"
       onClick={onClose}
     >
       {/* Sliding Inspector Panel */}
       <div 
-        className="w-full max-w-xl bg-[#05070d]/95 border-l border-slate-800/80 h-full flex flex-col shadow-2xl relative select-text transition-transform duration-300 transform translate-x-0"
+        className="inspect-panel-container w-full max-w-xl bg-[#05070d]/95 border-l border-slate-800/80 h-full flex flex-col shadow-2xl relative select-text transition-transform duration-300 transform translate-x-0"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Terminal Header */}
@@ -422,7 +525,7 @@ export const MissionInspection: React.FC<MissionInspectionProps> = ({
             </div>
 
             {/* Content Body */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
+            <div className="inspect-scroll-container flex-1 overflow-y-auto overscroll-y-contain p-6 space-y-6 scrollbar-thin">
               
               {/* Metadata Panel */}
               <div className="flex items-center justify-between pb-3.5 border-b border-slate-850/60 select-none">
@@ -639,6 +742,7 @@ export const MissionInspection: React.FC<MissionInspectionProps> = ({
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

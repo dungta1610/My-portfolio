@@ -337,7 +337,9 @@ export const LivingArchitectureBackground: React.FC = () => {
       pulseProgress += reducedMotion ? 0 : 0.006;
       if (pulseProgress > 1) pulseProgress = 0;
 
-      animationId = requestAnimationFrame(render);
+      if (!reducedMotion) {
+        animationId = requestAnimationFrame(render);
+      }
     };
 
     if (!recruiterMode) {

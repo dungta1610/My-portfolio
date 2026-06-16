@@ -23,11 +23,35 @@ const outfit = Outfit({
   display: "swap",
 });
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://dungta.dev";
+const SITE_TITLE = "Ta Duc Dung | Software Engineer Portfolio";
+const SITE_DESCRIPTION =
+  "Personal developer portfolio of Ta Duc Dung (DungTa) - Aspiring Software Engineer focusing on scalable systems, backend services, and clean interface designs.";
+
 export const metadata: Metadata = {
-  title: "Ta Duc Dung | Software Engineer Portfolio",
-  description: "Personal developer portfolio of Ta Duc Dung (DungTa) - Aspiring Software Engineer focusing on scalable systems, backend services, and clean interface designs.",
+  metadataBase: new URL(BASE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   keywords: ["Ta Duc Dung", "DungTa", "juntaaa", "Software Engineer", "Backend Developer", "Golang", "TypeScript", "React", "Next.js", "ICPC"],
   authors: [{ name: "Ta Duc Dung" }],
+  alternates: {
+    canonical: "/",
+  },
+  // og:image and twitter:image are injected automatically from
+  // opengraph-image.tsx / twitter-image.tsx in this segment.
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: BASE_URL,
+    siteName: "Ta Duc Dung Portfolio",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({

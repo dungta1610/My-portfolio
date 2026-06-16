@@ -95,10 +95,7 @@ export const ReactorProvider: React.FC<{ children: React.ReactNode }> = ({ child
       case "skills":
         return "skills";
       case "achievements":
-      case "resources":
         return "github";
-      case "blog":
-        return "skills";
       case "contact":
         return "contact";
       case "hero":

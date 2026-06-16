@@ -17,9 +17,10 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
   onClick,
   ...props
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({});
-  const [isHovered, setIsHovered] = useState(false);
+  const [flickering, setFlickering] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,8 +31,18 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseEnter = () => {
     if (!recruiterMode) {
+      setIsHovered(true);
+      if (!reducedMotion) {
+        setFlickering(true);
+        setTimeout(() => setFlickering(false), 300);
+      }
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!recruiterMode && !isHovered) {
       setIsHovered(true);
     }
     if (!cardRef.current) return;
@@ -67,18 +78,19 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
       transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
     });
   };
+
   // Recruiter mode uses high-contrast clean borders and solid bg, no glows
   if (recruiterMode) {
     const recruiterBorders = {
-      gold: "border-amber-600/30",
+      gold: "border-zinc-800",
       slate: "border-zinc-800",
       stone: "border-zinc-800",
-      red: "border-red-800/30",
-      blue: "border-blue-800/30",
-      cyan: "border-cyan-800/30",
-      emerald: "border-emerald-800/30",
-      purple: "border-purple-800/30",
-      violet: "border-violet-800/30",
+      red: "border-zinc-800",
+      blue: "border-zinc-800",
+      cyan: "border-zinc-800",
+      emerald: "border-zinc-800",
+      purple: "border-zinc-800",
+      violet: "border-zinc-800",
     };
 
     return (
@@ -95,28 +107,40 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
   }
 
   // Dashboard styling mapping for cybernetic panels
-  const accentColors = {
-    gold: "rgba(245, 158, 11, 0.2)",
-    slate: "rgba(148, 163, 184, 0.15)",
+  const borderColors = {
+    gold: "rgba(245, 158, 11, 0.22)",
+    slate: "rgba(6, 182, 212, 0.18)",
     stone: "rgba(115, 115, 115, 0.15)",
-    red: "rgba(239, 68, 68, 0.2)",
-    blue: "rgba(6, 182, 212, 0.2)",
-    cyan: "rgba(6, 182, 212, 0.2)",
-    emerald: "rgba(16, 185, 129, 0.2)",
-    purple: "rgba(139, 92, 246, 0.2)",
-    violet: "rgba(139, 92, 246, 0.2)",
+    red: "rgba(239, 68, 68, 0.22)",
+    blue: "rgba(6, 182, 212, 0.22)",
+    cyan: "rgba(6, 182, 212, 0.22)",
+    emerald: "rgba(16, 185, 129, 0.22)",
+    purple: "rgba(139, 92, 246, 0.22)",
+    violet: "rgba(139, 92, 246, 0.22)",
+  };
+
+  const borderColorsActive = {
+    gold: "rgba(245, 158, 11, 0.55)",
+    slate: "rgba(6, 182, 212, 0.45)",
+    stone: "rgba(115, 115, 115, 0.35)",
+    red: "rgba(239, 68, 68, 0.55)",
+    blue: "rgba(6, 182, 212, 0.65)",
+    cyan: "rgba(6, 182, 212, 0.65)",
+    emerald: "rgba(16, 185, 129, 0.55)",
+    purple: "rgba(139, 92, 246, 0.55)",
+    violet: "rgba(139, 92, 246, 0.55)",
   };
 
   const glowStyles = {
-    gold: "shadow-[0_0_20px_rgba(245,158,11,0.08)]",
-    slate: "shadow-[0_0_20px_rgba(148,163,184,0.05)]",
-    stone: "shadow-[0_0_20px_rgba(115,115,115,0.05)]",
-    red: "shadow-[0_0_20px_rgba(239,68,68,0.08)]",
-    blue: "shadow-[0_0_20px_rgba(6,182,212,0.08)]",
-    cyan: "shadow-[0_0_20px_rgba(6,182,212,0.08)]",
-    emerald: "shadow-[0_0_20px_rgba(16,185,129,0.08)]",
-    purple: "shadow-[0_0_20px_rgba(139,92,246,0.08)]",
-    violet: "shadow-[0_0_20px_rgba(139,92,246,0.08)]",
+    gold: "shadow-[0_0_25px_rgba(245,158,11,0.08),inset_0_0_12px_rgba(245,158,11,0.05)]",
+    slate: "shadow-[0_0_25px_rgba(6,182,212,0.06),inset_0_0_12px_rgba(6,182,212,0.04)]",
+    stone: "shadow-[0_0_25px_rgba(115,115,115,0.05),inset_0_0_12px_rgba(115,115,115,0.04)]",
+    red: "shadow-[0_0_25px_rgba(239,68,68,0.08),inset_0_0_12px_rgba(239,68,68,0.05)]",
+    blue: "shadow-[0_0_25px_rgba(6,182,212,0.08),inset_0_0_12px_rgba(6,182,212,0.05)]",
+    cyan: "shadow-[0_0_25px_rgba(6,182,212,0.08),inset_0_0_12px_rgba(6,182,212,0.05)]",
+    emerald: "shadow-[0_0_25px_rgba(16,185,129,0.08),inset_0_0_12px_rgba(16,185,129,0.05)]",
+    purple: "shadow-[0_0_25px_rgba(139,92,246,0.08),inset_0_0_12px_rgba(139,92,246,0.05)]",
+    violet: "shadow-[0_0_25px_rgba(139,92,246,0.08),inset_0_0_12px_rgba(139,92,246,0.05)]",
   };
 
   const borderGradient = {
@@ -133,20 +157,23 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
 
   const isClickable = !!onClick;
   const hoverClasses = isClickable
-    ? "cursor-pointer hover:border-cyan-500/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.12)] hover:-translate-y-1 active:translate-y-0"
+    ? "cursor-pointer hover:shadow-[0_0_30px_rgba(6,182,212,0.15),inset_0_0_16px_rgba(6,182,212,0.1)] hover:-translate-y-1 active:translate-y-0"
     : "";
 
   return (
     <div
       ref={cardRef}
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative rounded-xl bg-[#090d1a]/60 border backdrop-blur-md transition-all duration-300 p-6 group
-        ${glowing ? glowStyles[variant] : "shadow-[0_4px_30px_rgba(0,0,0,0.3)]"}
+      className={`relative rounded-xl border backdrop-blur-md transition-all duration-300 p-6 group
+        ${glowing ? glowStyles[variant] : "shadow-[0_4px_30px_rgba(0,0,0,0.4),inset_0_0_10px_rgba(6,182,212,0.03)]"}
+        ${flickering ? "animate-hologram-flicker" : ""}
         ${hoverClasses} ${className}`}
       style={{
-        borderColor: accentColors[variant] || "rgba(99, 102, 241, 0.15)",
+        borderColor: isHovered ? borderColorsActive[variant] : borderColors[variant],
+        background: isHovered ? "rgba(10, 16, 40, 0.55)" : "rgba(9, 13, 26, 0.45)",
         ...props.style,
         ...tiltStyle,
       }}
@@ -157,27 +184,36 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
         <div 
           className="absolute inset-0 rounded-xl pointer-events-none overflow-hidden z-0 select-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           style={{
-            background: `radial-gradient(circle 120px at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 255, 255, 0.06), transparent 80%)`,
+            background: `radial-gradient(circle 120px at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 255, 255, 0.05), transparent 80%)`,
           }}
         />
       )}
 
+      {/* Local light sweep shimmer overlay */}
+      {!recruiterMode && !reducedMotion && (
+        <div 
+          className="absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        >
+          <div className="absolute inset-0 w-[50%] h-[200%] -top-[50%] -left-[60%] bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent transform rotate-30 transition-transform duration-1000 group-hover:translate-x-[250%]" />
+        </div>
+      )}
+
       {/* Premium Tech corner elements */}
       <div 
-        className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l rounded-tl-lg pointer-events-none" 
-        style={{ borderColor: accentColors[variant] }}
+        className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l rounded-tl-lg pointer-events-none transition-colors duration-300" 
+        style={{ borderColor: isHovered ? borderColorsActive[variant] : borderColors[variant] }}
       />
       <div 
-        className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r rounded-tr-lg pointer-events-none" 
-        style={{ borderColor: accentColors[variant] }}
+        className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r rounded-tr-lg pointer-events-none transition-colors duration-300" 
+        style={{ borderColor: isHovered ? borderColorsActive[variant] : borderColors[variant] }}
       />
       <div 
-        className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l rounded-bl-lg pointer-events-none" 
-        style={{ borderColor: accentColors[variant] }}
+        className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l rounded-bl-lg pointer-events-none transition-colors duration-300" 
+        style={{ borderColor: isHovered ? borderColorsActive[variant] : borderColors[variant] }}
       />
       <div 
-        className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r rounded-br-lg pointer-events-none" 
-        style={{ borderColor: accentColors[variant] }}
+        className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r rounded-br-lg pointer-events-none transition-colors duration-300" 
+        style={{ borderColor: isHovered ? borderColorsActive[variant] : borderColors[variant] }}
       />
 
       {/* Decorative top border gradient line */}

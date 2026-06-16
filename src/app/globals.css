@@ -19,6 +19,33 @@
   --animate-float-core: float-core 4s ease-in-out infinite;
   --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
   --animate-sweep-linear: sweep-linear 3s linear infinite;
+  --animate-hologram-flicker: hologram-flicker 0.4s ease-in-out;
+  --animate-hologram-pulse-slow: hologram-pulse-slow 4s ease-in-out infinite;
+  --animate-hologram-shimmer-sweep: hologram-shimmer-sweep 2.5s ease-in-out infinite;
+}
+
+@keyframes hologram-flicker {
+  0%, 100% { opacity: 0.98; }
+  10% { opacity: 0.75; }
+  15% { opacity: 0.90; }
+  30% { opacity: 0.82; }
+  45% { opacity: 0.99; }
+  55% { opacity: 0.88; }
+  70% { opacity: 0.92; }
+  85% { opacity: 0.80; }
+  90% { opacity: 0.98; }
+}
+
+@keyframes hologram-pulse-slow {
+  0%, 100% { opacity: 0.35; filter: brightness(1) drop-shadow(0 0 4px rgba(6, 182, 212, 0.15)); }
+  50% { opacity: 0.65; filter: brightness(1.2) drop-shadow(0 0 15px rgba(6, 182, 212, 0.4)); }
+}
+
+@keyframes hologram-shimmer-sweep {
+  0% { transform: translateY(-100%) skewY(-10deg); opacity: 0; }
+  10% { opacity: 0.15; }
+  90% { opacity: 0.15; }
+  100% { transform: translateY(200%) skewY(-10deg); opacity: 0; }
 }
 
 @keyframes sweep-linear {
@@ -59,6 +86,15 @@ body {
   color: #f8fafc;
   overflow-x: hidden;
   font-family: var(--font-sans);
+}
+
+/* Keyboard-accessible focus ring. Only shows for keyboard navigation
+   (:focus-visible), so mouse users keep the clean look while keyboard users
+   get a clear, high-contrast indicator on links and interactive elements. */
+:focus-visible {
+  outline: 2px solid var(--color-accent-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* Custom modern scrollbar */
@@ -122,13 +158,46 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+/* Hologram Glass Panel */
+.hologram-glass {
+  background: rgba(9, 13, 26, 0.45);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(6, 182, 212, 0.18);
+  box-shadow: 
+    inset 0 0 12px rgba(6, 182, 212, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.5);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Floating HUD Tag */
+.hud-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(6, 182, 212, 0.7);
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  padding: 2px 6px;
+  border-radius: 2px;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
 /* Glow Text styles */
 .text-glow-cyan {
-  text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.45);
 }
 
 .text-glow-violet {
-  text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.45);
+}
+
+.text-glow-emerald {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.45);
 }
 
 /* Scan Line overlay effect */
@@ -140,7 +209,7 @@ body {
   background: linear-gradient(
     to bottom,
     rgba(6, 182, 212, 0) 0%,
-    rgba(6, 182, 212, 0.02) 10%,
+    rgba(6, 182, 212, 0.01) 10%,
     rgba(6, 182, 212, 0) 20%
   );
   pointer-events: none;
@@ -149,7 +218,8 @@ body {
 
 /* No-scroll utility for modals */
 .no-scroll {
-  overflow: hidden;
+  overflow: hidden !important;
+  height: 100% !important;
 }
 
 /* ── Section Reveal Entrance Animation ── */
@@ -172,4 +242,49 @@ body {
     transition: none;
     will-change: auto;
   }
+
+  /* Safety net: neutralize all decorative CSS animations and transitions for
+     users who request reduced motion. JS-driven canvas effects already bail
+     out via usePrefersReducedMotion; this covers the remaining utility-driven
+     animations (radar-spin, hologram-pulse, animate-pulse, etc.). */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Hologram Branch Graph Animations ── */
+@keyframes hologram-line-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hologram-node-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hologram-line-active {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: hologram-line-draw 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.hologram-node-active {
+  opacity: 0;
+  animation: hologram-node-fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

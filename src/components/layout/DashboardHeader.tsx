@@ -24,8 +24,6 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         { label: "Projects", id: "projects" },
         { label: "Skills", id: "skills" },
         { label: "Achievements", id: "achievements" },
-        { label: "Resources", id: "resources" },
-        { label: "Notes", id: "blog" },
         { label: "Contact", id: "contact" },
       ];
     } else {
@@ -35,8 +33,6 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         { label: "Missions", id: "projects" },
         { label: "Matrix", id: "skills" },
         { label: "Signals", id: "achievements" },
-        { label: "Vault", id: "resources" },
-        { label: "Logs", id: "blog" },
         { label: "Telemetry", id: "contact" },
       ];
     }
@@ -79,6 +75,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
+                  aria-current={active ? "true" : undefined}
                   className={`text-sm font-medium transition-colors hover:text-amber-500 cursor-pointer relative py-1
                     ${active ? "text-amber-500 font-semibold" : "text-zinc-400"}`}
                 >
@@ -93,6 +90,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
+                  aria-current={active ? "true" : undefined}
                   className={`text-xs font-mono tracking-wider uppercase transition-all duration-200 cursor-pointer relative py-1 hover:text-cyan-400
                     ${active ? "text-cyan-400 text-glow-cyan font-bold" : "text-slate-400"}`}
                 >
@@ -162,6 +160,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           {/* Mobile Hamburger Menu Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-nav-drawer"
             className={`md:hidden p-2 rounded-lg transition-colors cursor-pointer border ${
               recruiterMode 
                 ? "border-zinc-800 hover:bg-zinc-900 text-zinc-400 hover:text-zinc-200" 
@@ -176,7 +177,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
       {/* Mobile Drawer Menu */}
       {isOpen && (
-        <div 
+        <div
+          id="mobile-nav-drawer"
           className={`md:hidden absolute top-[100%] left-0 right-0 p-6 flex flex-col gap-3 shadow-2xl border-b ${
             recruiterMode 
               ? "bg-zinc-900 border-zinc-800 text-zinc-100" 
@@ -194,6 +196,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
+                aria-current={active ? "true" : undefined}
                 className={`w-full py-2 px-3 text-left rounded-md transition-all cursor-pointer ${
                   recruiterMode
                     ? active

@@ -1,13 +1,19 @@
 import React, { useState } from "react";
-import { Mail, FileDown, Send, CheckCircle, Terminal, Link as LinkIcon } from "lucide-react";
+import { Mail, FileDown, Send, CheckCircle, AlertCircle, Clock, Terminal } from "lucide-react";
 import { Github, Linkedin } from "../ui/Icons";
 import { DashboardCard } from "../ui/DashboardCard";
 import { DashboardButton } from "../ui/DashboardButton";
-import { DashboardBadge } from "../ui/DashboardBadge";
+import { RESUME_PATH, useResumeAvailable } from "../../hooks/useResumeAvailable";
 
 interface ContactSectionProps {
   recruiterMode: boolean;
 }
+
+const CONTACT_EMAIL = "dungta386469@gmail.com";
+// Formspree endpoint, e.g. "https://formspree.io/f/xxxxxxxx".
+// Configure via NEXT_PUBLIC_FORMSPREE_ENDPOINT in .env.local. When absent we
+// fall back to opening the visitor's mail client so the form is never a dead end.
+const FORMSPREE_ENDPOINT = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT;
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode }) => {
   const [name, setName] = useState("");
@@ -15,22 +21,67 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const resumeAvailable = useResumeAvailable();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const resetForm = () => {
+    setName("");
+    setEmail("");
+    setMessage("");
+  };
+
+  const openMailFallback = () => {
+    const subject = encodeURIComponent(`Portfolio contact from ${name}`);
+    const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !message) return;
-    
-    setLoading(true);
-    // Simulate sending message
-    setTimeout(() => {
-      setLoading(false);
+    if (!name || !email || !message || loading) return;
+
+    setError(null);
+
+    // No backend configured: hand off to the visitor's email client.
+    if (!FORMSPREE_ENDPOINT) {
+      openMailFallback();
       setSent(true);
-      setName("");
-      setEmail("");
-      setMessage("");
-      // Reset success message after 5 seconds
+      resetForm();
       setTimeout(() => setSent(false), 5000);
-    }, 1500);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (!res.ok) {
+        let detail = "";
+        try {
+          const data = await res.json();
+          detail = data?.errors?.[0]?.message ?? "";
+        } catch {
+          /* response had no JSON body */
+        }
+        throw new Error(detail || `Request failed (${res.status}).`);
+      }
+
+      setSent(true);
+      resetForm();
+      setTimeout(() => setSent(false), 5000);
+    } catch (err: unknown) {
+      const messageText = err instanceof Error ? err.message : "Something went wrong.";
+      setError(`Could not send message: ${messageText} You can email me directly instead.`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Dashboard View
@@ -101,11 +152,17 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
             </div>
 
             <div className="pt-4 border-t border-zinc-800/80 text-center">
-              <a href="/resume.pdf" download="Ta_Duc_Dung_Resume.pdf" className="block">
-                <DashboardButton variant="cyan" className="w-full justify-center flex items-center gap-2 cursor-pointer">
-                  <FileDown className="w-3.5 h-3.5" /> DOWNLOAD OPERATIONS PAYLOAD (CV)
+              {resumeAvailable === true ? (
+                <a href={RESUME_PATH} download="Ta_Duc_Dung_Resume.pdf" className="block">
+                  <DashboardButton variant="cyan" className="w-full justify-center flex items-center gap-2 cursor-pointer">
+                    <FileDown className="w-3.5 h-3.5" /> DOWNLOAD OPERATIONS PAYLOAD (CV)
+                  </DashboardButton>
+                </a>
+              ) : (
+                <DashboardButton variant="slate" disabled title="Resume coming soon" className="w-full justify-center flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5" /> OPERATIONS PAYLOAD // COMING SOON
                 </DashboardButton>
-              </a>
+              )}
             </div>
           </DashboardCard>
 
@@ -159,10 +216,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                <span className="font-mono text-[9px] text-rose-500/60 uppercase">
-                  * FRONTEND_PREVIEW_ONLY
+                <span className="font-mono text-[9px] text-zinc-500 uppercase">
+                  * Secure transmission to operator
                 </span>
-                
+
                 <DashboardButton type="submit" variant={loading ? "slate" : "cyan"} disabled={loading} className="cursor-pointer">
                   {loading ? "TRANSMITTING..." : "DISPATCH_PACKET"}
                 </DashboardButton>
@@ -172,7 +229,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
             {sent && (
               <div className="mt-4 p-3 border border-emerald-500/30 bg-emerald-500/5 font-mono text-xs text-emerald-400 rounded-lg flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Message successfully broadcasted! (Mock submit successful)</span>
+                <span>Transmission received — I&apos;ll get back to you shortly.</span>
+              </div>
+            )}
+
+            {error && (
+              <div className="mt-4 p-3 border border-rose-500/30 bg-rose-500/5 font-mono text-xs text-rose-400 rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                <span>{error}</span>
               </div>
             )}
           </DashboardCard>
@@ -243,13 +307,22 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
             </div>
 
             <div className="pt-2">
-              <a 
-                href="/resume.pdf" 
-                download="Ta_Duc_Dung_Resume.pdf"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors font-bold text-sm cursor-pointer border border-zinc-700"
-              >
-                <FileDown className="w-4 h-4 text-zinc-400" /> Download Resume PDF
-              </a>
+              {resumeAvailable === true ? (
+                <a
+                  href={RESUME_PATH}
+                  download="Ta_Duc_Dung_Resume.pdf"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition-colors font-bold text-sm cursor-pointer border border-zinc-700"
+                >
+                  <FileDown className="w-4 h-4 text-zinc-400" /> Download Resume PDF
+                </a>
+              ) : (
+                <span
+                  title="Resume coming soon"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-900 text-zinc-500 font-bold text-sm cursor-not-allowed border border-zinc-800"
+                >
+                  <Clock className="w-4 h-4 text-zinc-600" /> Resume Coming Soon
+                </span>
+              )}
             </div>
           </div>
 
@@ -300,12 +373,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
                 />
               </div>
 
-              <div className="flex items-center justify-between gap-4 pt-2">
-                <span className="text-[10px] text-zinc-500 font-semibold uppercase">
-                  * Note: Form is a UI Demo
-                </span>
-                <button 
-                  type="submit" 
+              <div className="flex items-center justify-end gap-4 pt-2">
+                <button
+                  type="submit"
                   disabled={loading}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold transition-all text-xs cursor-pointer disabled:opacity-50"
                 >
@@ -317,7 +387,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ recruiterMode })
             {sent && (
               <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-lg flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                <span>Message mock-submitted successfully!</span>
+                <span>Thanks for reaching out — I&apos;ll reply soon.</span>
+              </div>
+            )}
+
+            {error && (
+              <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span>{error}</span>
               </div>
             )}
           </div>

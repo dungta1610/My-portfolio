@@ -1,27 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { DashboardCard } from "../ui/DashboardCard";
+import React from "react";
 import { DashboardButton } from "../ui/DashboardButton";
-import { Calendar, Briefcase, GraduationCap, FileDown, AlertCircle, Terminal } from "lucide-react";
+import { FileDown, Clock, Terminal } from "lucide-react";
+import { TimelineCard } from "../timeline/TimelineCard";
+import { RESUME_PATH, useResumeAvailable } from "../../hooks/useResumeAvailable";
 
 interface ResumeSectionProps {
   recruiterMode: boolean;
 }
 
 export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) => {
-  const [resumeMissing, setResumeMissing] = useState(false);
-
-  useEffect(() => {
-    // Check if resume.pdf is present in the public folder
-    fetch("/resume.pdf", { method: "HEAD" })
-      .then((res) => {
-        if (!res.ok) {
-          setResumeMissing(true);
-        }
-      })
-      .catch(() => {
-        setResumeMissing(true);
-      });
-  }, []);
+  const resumeAvailable = useResumeAvailable();
 
   const experiences = [
     {
@@ -34,6 +22,13 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
         "Contributed to a trial-released Web3 token launchpad supporting meme-token discovery, launch, and trading.",
         "Refactored Figma-based interfaces into fully responsive screens using React, Next.js, TypeScript, and Tailwind CSS.",
         "Integrated API-driven frontend flows, handling loading, error, and user-facing data states in a production-like codebase."
+      ],
+      inspectionNodes: [
+        { label: "Role", value: "Frontend Dev", side: "left" as const, topPercent: 20, nodeY: 15 },
+        { label: "Stack", value: "Next.js / TS", side: "left" as const, topPercent: 50, nodeY: 45 },
+        { label: "Styling", value: "Tailwind CSS", side: "left" as const, topPercent: 80, nodeY: 75 },
+        { label: "Domain", value: "Web3 Launchpad", side: "right" as const, topPercent: 30, nodeY: 25 },
+        { label: "Task", value: "Figma UI Refactor", side: "right" as const, topPercent: 70, nodeY: 65 }
       ]
     },
     {
@@ -45,6 +40,12 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
       description: [
         "GPA: 3.6 / 4.0",
         "Deepening knowledge in data structures, algorithms, databases, computer networks, and system designs."
+      ],
+      inspectionNodes: [
+        { label: "Degree", value: "B.S. in IT", side: "left" as const, topPercent: 25, nodeY: 20 },
+        { label: "GPA", value: "3.6 / 4.0", side: "left" as const, topPercent: 75, nodeY: 70 },
+        { label: "Focus", value: "Data & Systems", side: "right" as const, topPercent: 30, nodeY: 25 },
+        { label: "Target", value: "Grad: May 2028", side: "right" as const, topPercent: 70, nodeY: 65 }
       ]
     },
     {
@@ -56,6 +57,11 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
       description: [
         "Contributed to Competitive Programming training materials.",
         "Prepared problems for the 2023 PTNK (High School for the Gifted) mock entrance exam."
+      ],
+      inspectionNodes: [
+        { label: "Role", value: "Advisor", side: "left" as const, topPercent: 30, nodeY: 25 },
+        { label: "Topic", value: "Competitive Prog", side: "left" as const, topPercent: 70, nodeY: 65 },
+        { label: "Output", value: "Mock Exam Prep", side: "right" as const, topPercent: 50, nodeY: 45 }
       ]
     }
   ];
@@ -71,64 +77,40 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
           </h2>
         </div>
 
-        {/* Warning Banner if resume is missing */}
-        {resumeMissing && (
-          <div className="mb-6 p-4 border border-rose-500/30 bg-[#12080a] flex items-start gap-3 rounded-lg shadow-[inset_0_0_10px_rgba(244,63,94,0.05)]">
-            <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
-            <div className="font-mono text-xs text-slate-300">
-              <span className="text-rose-400 font-bold block mb-1">WARNING // FILE_NOT_FOUND</span>
-              Telemetry source <code className="text-rose-400 font-bold">resume.pdf</code> is missing from target <code className="bg-[#05070d] px-1.5 py-0.5 rounded border border-slate-800 text-[10px]">/public</code> layout.
-            </div>
-          </div>
-        )}
-
         <div className="space-y-6">
-          {experiences.map((exp, idx) => {
-            const isEdu = exp.type === "education";
-            return (
-              <DashboardCard key={idx} variant={isEdu ? "blue" : "slate"} className="relative">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-3 mb-4">
-                  <div>
-                    <h3 className="font-mono text-xs text-cyan-400 font-bold uppercase flex items-center gap-2">
-                      {isEdu ? (
-                        <GraduationCap className="w-4 h-4 text-cyan-400" />
-                      ) : (
-                        <Briefcase className="w-4 h-4 text-violet-400" />
-                      )}
-                      {exp.title}
-                    </h3>
-                    <p className="text-sm font-semibold text-slate-200 mt-1">
-                      {exp.organization}
-                    </p>
-                  </div>
-                  <div className="mt-2 md:mt-0 flex flex-col md:items-end font-mono text-[10px]">
-                    <span className="text-slate-400 flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5" /> {exp.time}
-                    </span>
-                    <span className="text-slate-500 mt-0.5">{exp.location}</span>
-                  </div>
-                </div>
-
-                <ul className="space-y-2 text-sm text-slate-300">
-                  {exp.description.map((bullet, bIdx) => (
-                    <li key={bIdx} className="flex items-start gap-2">
-                      <span className="text-cyan-500 font-mono select-none mt-0.5">»</span>
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
-              </DashboardCard>
-            );
-          })}
+          {experiences.map((exp, idx) => (
+            <TimelineCard
+              key={idx}
+              title={exp.title}
+              organization={exp.organization}
+              time={exp.time}
+              location={exp.location}
+              description={exp.description}
+              type={exp.type}
+              recruiterMode={false}
+              inspectionNodes={exp.inspectionNodes}
+            />
+          ))}
         </div>
 
-        {/* Download Action */}
+        {/* Download Action — only offered when the file actually exists */}
         <div className="mt-8 text-center">
-          <a href="/resume.pdf" download="Ta_Duc_Dung_Resume.pdf">
-            <DashboardButton variant="gold" className="flex items-center gap-1.5 mx-auto">
-              <FileDown className="w-4 h-4" /> Download PDF Resume
+          {resumeAvailable === true ? (
+            <a href={RESUME_PATH} download="Ta_Duc_Dung_Resume.pdf">
+              <DashboardButton variant="gold" className="flex items-center gap-1.5 mx-auto">
+                <FileDown className="w-4 h-4" /> Download PDF Resume
+              </DashboardButton>
+            </a>
+          ) : (
+            <DashboardButton
+              variant="slate"
+              disabled
+              title="Resume coming soon"
+              className="flex items-center gap-1.5 mx-auto"
+            >
+              <Clock className="w-4 h-4" /> Resume Coming Soon
             </DashboardButton>
-          </a>
+          )}
         </div>
       </section>
     );
@@ -146,52 +128,39 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ recruiterMode }) =
             <h2 className="text-2xl font-bold text-zinc-100">Professional Timeline</h2>
           </div>
           <div className="mt-4 md:mt-0 flex items-center gap-3">
-            {resumeMissing && (
-              <span className="text-xs text-red-400 font-medium flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5" /> Place resume.pdf in /public
+            {resumeAvailable === true ? (
+              <a
+                href={RESUME_PATH}
+                download="Ta_Duc_Dung_Resume.pdf"
+                className="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 transition-colors cursor-pointer"
+              >
+                <FileDown className="w-4 h-4 text-zinc-400" /> Download PDF Resume
+              </a>
+            ) : (
+              <span
+                title="Resume coming soon"
+                className="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-500 cursor-not-allowed"
+              >
+                <Clock className="w-4 h-4 text-zinc-600" /> Resume Coming Soon
               </span>
             )}
-            <a 
-              href="/resume.pdf" 
-              download="Ta_Duc_Dung_Resume.pdf"
-              className="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 transition-colors cursor-pointer"
-            >
-              <FileDown className="w-4 h-4 text-zinc-400" /> Download PDF Resume
-            </a>
           </div>
         </div>
 
         <div className="border-l border-zinc-800 ml-4 pl-8 space-y-10">
-          {experiences.map((exp, idx) => {
-            const isEdu = exp.type === "education";
-            return (
-              <div key={idx} className="relative">
-                {/* Timeline Dot */}
-                <span className={`absolute -left-12 top-1.5 w-8 h-8 rounded-full border border-zinc-900 flex items-center justify-center
-                  ${isEdu ? "bg-blue-500/10 text-blue-400" : "bg-zinc-800 text-zinc-400"}`}
-                >
-                  {isEdu ? <GraduationCap className="w-4 h-4" /> : <Briefcase className="w-4 h-4" />}
-                </span>
-
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline">
-                  <div>
-                    <h3 className="text-lg font-bold text-zinc-100">{exp.title}</h3>
-                    <p className="text-sm text-zinc-400 mt-0.5">{exp.organization}</p>
-                  </div>
-                  <div className="mt-1 sm:mt-0 text-xs text-zinc-500 flex flex-col sm:items-end">
-                    <span className="font-semibold text-zinc-400">{exp.time}</span>
-                    <span className="mt-0.5">{exp.location}</span>
-                  </div>
-                </div>
-
-                <ul className="list-disc pl-5 mt-3 space-y-1 text-sm text-zinc-400 leading-relaxed">
-                  {exp.description.map((bullet, bIdx) => (
-                    <li key={bIdx}>{bullet}</li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+          {experiences.map((exp, idx) => (
+            <TimelineCard
+              key={idx}
+              title={exp.title}
+              organization={exp.organization}
+              time={exp.time}
+              location={exp.location}
+              description={exp.description}
+              type={exp.type}
+              recruiterMode={true}
+              inspectionNodes={exp.inspectionNodes}
+            />
+          ))}
         </div>
       </section>
     );

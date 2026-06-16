@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Mail, FileText, ArrowRight, Terminal, Cpu } from "lucide-react";
 import { Github } from "../ui/Icons";
 import { GitHubProfileStats } from "../../types/portfolio";
@@ -6,7 +7,8 @@ import { DashboardCard } from "../ui/DashboardCard";
 import { DashboardButton } from "../ui/DashboardButton";
 import { DashboardBadge } from "../ui/DashboardBadge";
 import { HolographicSystemCore } from "../effects/HolographicSystemCore";
-import { ControlTerminal } from "../terminal/ControlTerminal";
+import { AmbientParticles } from "../effects/AmbientParticles";
+import { SafeEffect } from "../effects/SafeEffect";
 
 interface CommandCenterHeroProps {
   stats: GitHubProfileStats | null;
@@ -56,10 +58,11 @@ export const CommandCenterHero: React.FC<CommandCenterHeroProps> = ({
                 <div className="relative group shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-violet-500 rounded-full blur-sm opacity-40 group-hover:opacity-75 transition-opacity duration-300" />
                   <div className="w-20 h-20 bg-[#070b16] border border-cyan-500/20 rounded-full p-1 relative overflow-hidden z-10">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={stats?.avatarUrl || "https://avatars.githubusercontent.com/u/86794511?v=4"}
                       alt="Ta Duc Dung"
+                      width={80}
+                      height={80}
                       className="w-full h-full object-cover rounded-full"
                     />
                   </div>
@@ -82,24 +85,29 @@ export const CommandCenterHero: React.FC<CommandCenterHeroProps> = ({
               </div>
 
               {/* Attributes metrics sheet */}
-              <div className="grid grid-cols-2 gap-2 font-mono text-[10px] bg-[#05070d]/60 p-3.5 border border-slate-800 rounded-lg">
-                <div>
-                  <span className="text-slate-500 uppercase">SYS_ATK (Go/C++):</span> <span className="text-cyan-400 font-bold ml-1">99/99</span>
+              <div className="relative">
+                <div className="absolute -top-2 right-3 font-mono text-[8px] text-violet-400/80 bg-[#05070d] border border-violet-500/30 px-1.5 py-0.5 rounded uppercase tracking-widest select-none pointer-events-none z-20">
+                  NODE TRACE
                 </div>
-                <div>
-                  <span className="text-slate-500 uppercase">UI_DEF (Next.js):</span> <span className="text-cyan-400 font-bold ml-1">88/99</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 uppercase">COMP_DEX (Algorithms):</span> <span className="text-cyan-400 font-bold ml-1">90/99</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 uppercase">ARCH_INT (Systems):</span> <span className="text-cyan-400 font-bold ml-1">92/99</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 uppercase">REPOS_CLEARED:</span> <span className="text-amber-400 font-bold ml-1">{stats?.publicRepos || 14}</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 uppercase">PARTY_MEMBERS:</span> <span className="text-violet-400 font-bold ml-1">{stats?.followers || 4} Followers</span>
+                <div className="grid grid-cols-2 gap-2 font-mono text-[10px] bg-[#05070d]/60 p-3.5 border border-slate-800 rounded-lg">
+                  <div>
+                    <span className="text-slate-500 uppercase">SYS_ATK (Go/C++):</span> <span className="text-cyan-400 font-bold ml-1">99/99</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 uppercase">UI_DEF (Next.js):</span> <span className="text-cyan-400 font-bold ml-1">88/99</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 uppercase">COMP_DEX (Algorithms):</span> <span className="text-cyan-400 font-bold ml-1">90/99</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 uppercase">ARCH_INT (Systems):</span> <span className="text-cyan-400 font-bold ml-1">92/99</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 uppercase">REPOS_CLEARED:</span> <span className="text-amber-400 font-bold ml-1">{stats?.publicRepos || 14}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 uppercase">PARTY_MEMBERS:</span> <span className="text-violet-400 font-bold ml-1">{stats?.followers || 4} Followers</span>
+                  </div>
                 </div>
               </div>
 
@@ -112,23 +120,28 @@ export const CommandCenterHero: React.FC<CommandCenterHeroProps> = ({
               </div>
 
               {/* System diagnostics panel */}
-              <div className="bg-[#05070d]/90 border border-slate-800 rounded-lg p-3 flex flex-col gap-1.5 relative overflow-hidden select-none">
-                <div className="flex items-center gap-1.5 font-mono text-[9px] text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-1.5">
-                  <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-                  <span>Diagnostics</span>
+              <div className="relative">
+                <div className="absolute -top-2 right-3 font-mono text-[8px] text-cyan-400/80 bg-[#05070d] border border-cyan-500/30 px-1.5 py-0.5 rounded uppercase tracking-widest select-none pointer-events-none z-20">
+                  TELEMETRY
                 </div>
-                <div className="font-mono text-[10px] space-y-1 text-slate-400">
-                  <div className="flex justify-between">
-                    <span>CPU_LOAD:</span>
-                    <span className="text-emerald-400 font-bold">12%</span>
+                <div className="bg-[#05070d]/90 border border-slate-800 rounded-lg p-3 flex flex-col gap-1.5 relative overflow-hidden select-none">
+                  <div className="flex items-center gap-1.5 font-mono text-[9px] text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-1.5">
+                    <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                    <span>Diagnostics</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>CORE_TEMP:</span>
-                    <span className="text-emerald-400 font-bold">41°C</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>SYS_CORE:</span>
-                    <span className="text-cyan-400 font-bold">STABLE</span>
+                  <div className="font-mono text-[10px] space-y-1 text-slate-400">
+                    <div className="flex justify-between">
+                      <span>CPU_LOAD:</span>
+                      <span className="text-emerald-400 font-bold">12%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>CORE_TEMP:</span>
+                      <span className="text-emerald-400 font-bold">41°C</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>SYS_CORE:</span>
+                      <span className="text-cyan-400 font-bold">STABLE</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -155,20 +168,45 @@ export const CommandCenterHero: React.FC<CommandCenterHeroProps> = ({
               </div>
             </div>
 
-            {/* Right Column: 3D Hologram + Control Terminal */}
+            {/* Right Column: 3D Hologram */}
             <div className="lg:col-span-7 flex flex-col gap-4">
               
               {/* Interactive 3D Core Hologram (visual container) */}
-              <div className="w-full bg-[#05070d]/30 border border-slate-800/80 rounded-xl relative overflow-hidden h-[240px] shrink-0" id="hologram-core-container">
-                <HolographicSystemCore 
-                  active={true} 
-                  hoveredProjectId={hoveredProjectId} 
-                  activeSection={activeSection}
-                />
-              </div>
+              <div className="w-full bg-[#05070d]/30 border border-slate-800/80 rounded-xl relative overflow-hidden h-[480px] shrink-0" id="hologram-core-container">
+                {/* Slow pulsing radial projection glow backdrop */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.06)_0%,transparent_75%)] animate-hologram-pulse-slow pointer-events-none z-0" />
+                
+                {/* HUD corner framing brackets */}
+                <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-cyan-500/30 pointer-events-none z-10" />
+                <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-cyan-500/30 pointer-events-none z-10" />
+                <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-cyan-500/30 pointer-events-none z-10" />
+                <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-cyan-500/30 pointer-events-none z-10" />
 
-              {/* Control Terminal UI Console */}
-              <ControlTerminal />
+                {/* Floating HUD labels */}
+                <div className="absolute top-4 left-4 font-mono text-[8px] text-cyan-400/40 uppercase tracking-widest pointer-events-none z-10 select-none">
+                  [SYS.STATUS: ACTIVE]
+                </div>
+                <div className="absolute top-4 right-4 font-mono text-[8px] text-cyan-400/40 uppercase tracking-widest pointer-events-none z-10 select-none flex items-center gap-1">
+                  <span className="w-1 h-1 rounded-full bg-cyan-500 animate-pulse" />
+                  <span>CORE ACTIVE</span>
+                </div>
+                <div className="absolute bottom-4 left-4 font-mono text-[8px] text-slate-500/60 uppercase tracking-widest pointer-events-none z-10 select-none">
+                  ARCH VIEW // DUNG_CTL
+                </div>
+
+                <SafeEffect>
+                  <AmbientParticles
+                    recruiterMode={recruiterMode}
+                    activeSection={activeSection}
+                    hoveredProjectId={hoveredProjectId}
+                  />
+                  <HolographicSystemCore
+                    active={true}
+                    hoveredProjectId={hoveredProjectId}
+                    activeSection={activeSection}
+                  />
+                </SafeEffect>
+              </div>
             </div>
 
           </div>
@@ -187,10 +225,11 @@ export const CommandCenterHero: React.FC<CommandCenterHeroProps> = ({
           {/* Left Avatar */}
           <div className="flex flex-col items-center gap-4">
             <div className="w-36 h-36 bg-zinc-800 border border-zinc-700 rounded-full overflow-hidden p-1">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={stats?.avatarUrl || "https://avatars.githubusercontent.com/u/86794511?v=4"}
                 alt="Ta Duc Dung"
+                width={144}
+                height={144}
                 className="w-full h-full object-cover rounded-full"
               />
             </div>

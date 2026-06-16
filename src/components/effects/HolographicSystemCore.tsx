@@ -202,6 +202,7 @@ export const HolographicSystemCore: React.FC<HolographicSystemCoreProps> = ({
 
     // Concentric orbiting rings
     const orbitRingPoints: { x: number; y: number; z: number }[] = [];
+    const inclinedRingPoints: { x: number; y: number; z: number }[] = [];
     const numRingPoints = 36;
     for (let i = 0; i < numRingPoints; i++) {
       const angle = (i / numRingPoints) * Math.PI * 2;
@@ -209,6 +210,11 @@ export const HolographicSystemCore: React.FC<HolographicSystemCoreProps> = ({
         x: Math.cos(angle) * 115,
         y: 0,
         z: Math.sin(angle) * 115,
+      });
+      inclinedRingPoints.push({
+        x: Math.cos(angle) * 95,
+        y: Math.sin(angle) * 45,
+        z: Math.sin(angle) * 95,
       });
     }
 
@@ -491,7 +497,31 @@ export const HolographicSystemCore: React.FC<HolographicSystemCoreProps> = ({
         };
       });
 
-      // ── 3. Draw Orbit Rings & Background Orbs ──
+      // ── 3. Draw Floor Coordinate Grid ──
+      if (!recruiterMode) {
+        ctx.strokeStyle = activeModeSchema.accentColor + "0.06)";
+        ctx.lineWidth = 0.5;
+        const gridLines = 4;
+        const gridSpacing = 40;
+        for (let i = -gridLines; i <= gridLines; i++) {
+          const pt1 = projectPoint({ x: i * gridSpacing, y: 70, z: -gridLines * gridSpacing });
+          const pt2 = projectPoint({ x: i * gridSpacing, y: 70, z: gridLines * gridSpacing });
+          ctx.beginPath();
+          ctx.moveTo(pt1.x, pt1.y);
+          ctx.lineTo(pt2.x, pt2.y);
+          ctx.stroke();
+        }
+        for (let i = -gridLines; i <= gridLines; i++) {
+          const pt1 = projectPoint({ x: -gridLines * gridSpacing, y: 70, z: i * gridSpacing });
+          const pt2 = projectPoint({ x: gridLines * gridSpacing, y: 70, z: i * gridSpacing });
+          ctx.beginPath();
+          ctx.moveTo(pt1.x, pt1.y);
+          ctx.lineTo(pt2.x, pt2.y);
+          ctx.stroke();
+        }
+      }
+
+      // ── 3.1 Draw Orbit Rings ──
       const projectedOrbitRing = orbitRingPoints.map(projectPoint);
       ctx.beginPath();
       for (let i = 0; i < projectedOrbitRing.length; i++) {
@@ -504,6 +534,23 @@ export const HolographicSystemCore: React.FC<HolographicSystemCoreProps> = ({
         ctx.moveTo(curr.x, curr.y);
         ctx.lineTo(next.x, next.y);
         ctx.stroke();
+      }
+
+      // ── 3.2 Draw Inclined Orbit Rings ──
+      if (!recruiterMode) {
+        const projectedInclinedRing = inclinedRingPoints.map(projectPoint);
+        ctx.beginPath();
+        for (let i = 0; i < projectedInclinedRing.length; i++) {
+          const curr = projectedInclinedRing[i];
+          const next = projectedInclinedRing[(i + 1) % projectedInclinedRing.length];
+          const depthAlpha = Math.max(0.02, Math.min(0.20, 0.12 + curr.z / 180));
+          ctx.strokeStyle = activeModeSchema.accentColor + `${depthAlpha * 0.6})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(curr.x, curr.y);
+          ctx.lineTo(next.x, next.y);
+          ctx.stroke();
+        }
       }
 
       // Background mesh node connections (adds sci-fi complexity)
@@ -667,6 +714,44 @@ export const HolographicSystemCore: React.FC<HolographicSystemCoreProps> = ({
         ctx.stroke();
         ctx.restore();
       }
+
+      // ── 7.1 Draw Viewport Corner Crosshairs & Coordinates Readout ──
+      if (!recruiterMode) {
+        ctx.strokeStyle = activeModeSchema.themeColor + "0.15)";
+        ctx.lineWidth = 1.0;
+        const pad = 12;
+        const len = 15;
+        // Top-left corner
+        ctx.beginPath();
+        ctx.moveTo(pad + len, pad); ctx.lineTo(pad, pad); ctx.lineTo(pad, pad + len);
+        ctx.stroke();
+        // Top-right corner
+        ctx.beginPath();
+        ctx.moveTo(width - pad - len, pad); ctx.lineTo(width - pad, pad); ctx.lineTo(width - pad, pad + len);
+        ctx.stroke();
+        // Bottom-left corner
+        ctx.beginPath();
+        ctx.moveTo(pad + len, height - pad); ctx.lineTo(pad, height - pad); ctx.lineTo(pad, height - pad - len);
+        ctx.stroke();
+        // Bottom-right corner
+        ctx.beginPath();
+        ctx.moveTo(width - pad - len, height - pad); ctx.lineTo(width - pad, height - pad); ctx.lineTo(width - pad, height - pad - len);
+        ctx.stroke();
+
+        // Coordinates & System status texts
+        ctx.fillStyle = activeModeSchema.themeColor + "0.45)";
+        ctx.font = "8px monospace";
+        ctx.textAlign = "left";
+        ctx.fillText(`CAM_R.X: ${(rotX % (Math.PI * 2)).toFixed(2)} rad`, pad + 6, pad + 15);
+        ctx.fillText(`CAM_R.Y: ${(rotY % (Math.PI * 2)).toFixed(2)} rad`, pad + 6, pad + 25);
+        ctx.fillText(`PROJ_FPS: 60.0`, pad + 6, pad + 35);
+
+        ctx.textAlign = "right";
+        ctx.fillText(`PROJ.CORE: ONLINE`, width - pad - 6, pad + 15);
+        ctx.fillText(`RES: ${width}x${height}`, width - pad - 6, pad + 25);
+        ctx.fillText(`STATE: ${activeMode.toUpperCase()}`, width - pad - 6, pad + 35);
+      }
+
       // ── 8. Request Next Frame ──
       if (isVisible && active && !reducedMotion && !recruiterMode) {
         animationFrameId = requestAnimationFrame(render);
